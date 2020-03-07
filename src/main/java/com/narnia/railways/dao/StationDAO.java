@@ -2,7 +2,6 @@ package com.narnia.railways.dao;
 
 import com.narnia.railways.model.Station;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,8 +12,11 @@ import java.util.List;
 @Transactional
 public class StationDAO {
 
-    @Autowired
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
+
+    public StationDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
 
     public void save(Station station) {
         sessionFactory.getCurrentSession().save(station);

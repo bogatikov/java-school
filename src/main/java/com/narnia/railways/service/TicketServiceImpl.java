@@ -1,18 +1,37 @@
 package com.narnia.railways.service;
 
-import com.narnia.railways.domain.Passenger;
-import com.narnia.railways.domain.Trip;
+import com.narnia.railways.dao.TicketDAO;
+import com.narnia.railways.model.Ticket;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+@Service
 public class TicketServiceImpl {
 
-    /**
-     * But ticket on the trip for passanger
-     * @param passenger
-     * @param trip
-     * @return true if ticket was bought otherwise false
-     */
-    public boolean buyTicket(Passenger passenger, Trip trip) {
+    private final TicketDAO ticketDAO;
 
-        return false;
+    public TicketServiceImpl(TicketDAO ticketDAO) {
+        this.ticketDAO = ticketDAO;
+    }
+
+    public List<Ticket> getAll() {
+        return ticketDAO.list();
+    }
+
+    public void save(Ticket ticket) {
+        ticketDAO.save(ticket);
+    }
+
+    public Ticket getById(Long id) {
+        return ticketDAO.getById(id);
+    }
+
+    public void delete(Ticket ticket) {
+        ticketDAO.delete(ticket);
+    }
+
+    public void update(Ticket ticket) {
+        ticketDAO.update(ticket);
     }
 }

@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class StationService {
+public class StationServiceImpl {
 
     private final StationDAO stationDAO;
 
-    public StationService(StationDAO stationDAO) {
+    public StationServiceImpl(StationDAO stationDAO) {
         this.stationDAO = stationDAO;
     }
 
