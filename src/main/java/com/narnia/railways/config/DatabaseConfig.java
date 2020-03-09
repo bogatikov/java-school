@@ -53,6 +53,7 @@ public class DatabaseConfig {
         //properties.put("hibernate.current_session_context_class","thread");
         properties.put("hibernate.hbm2ddl.auto","update");
         properties.put("hibernate.show_sql","true");
+        properties.put("hibernate.jdbc.time_zone", "UTC");
 
         localSessionFactoryBean.setHibernateProperties(properties);
         return localSessionFactoryBean;

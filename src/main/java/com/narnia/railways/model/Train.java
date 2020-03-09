@@ -1,8 +1,12 @@
 package com.narnia.railways.model;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.time.Instant;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -19,4 +23,7 @@ public class Train {
 
     @ManyToOne
     private Station arrival;
+
+//    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    private Instant departureTime;
 }

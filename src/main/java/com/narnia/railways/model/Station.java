@@ -20,4 +20,6 @@ public class Station {
     private Double longitude;
 
     private Double latitude;
+
+    private Long val;
 }

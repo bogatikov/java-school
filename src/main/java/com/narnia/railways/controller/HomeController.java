@@ -1,11 +1,14 @@
 package com.narnia.railways.controller;
 
 import com.narnia.railways.model.Station;
+import com.narnia.railways.model.Train;
 import com.narnia.railways.service.StationServiceImpl;
+import com.narnia.railways.service.TrainServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.Instant;
 import java.util.Objects;
 
 @Controller
@@ -14,8 +17,11 @@ class HomeController {
 
     private final StationServiceImpl stationServiceImpl;
 
-    HomeController(StationServiceImpl stationServiceImpl) {
+    private final TrainServiceImpl trainServiceImpl;
+
+    HomeController(StationServiceImpl stationServiceImpl, TrainServiceImpl trainServiceImpl) {
         this.stationServiceImpl = stationServiceImpl;
+        this.trainServiceImpl = trainServiceImpl;
     }
 
 
@@ -50,6 +56,25 @@ class HomeController {
         if (Objects.nonNull(station))
             stationServiceImpl.delete(station);
         return "redirect:/";
+    }
+
+
+    @RequestMapping("/cal")
+    public String cal() {
+        Train train = trainServiceImpl.getById(1L);
+        System.out.println("===================-30");
+        trainServiceImpl.calculateTrainPosition(train, Instant.parse("2020-03-08T14:30:00Z"));
+        System.out.println("===================00");
+        trainServiceImpl.calculateTrainPosition(train, Instant.parse("2020-03-08T15:00:00Z"));
+        System.out.println("===================10");
+        trainServiceImpl.calculateTrainPosition(train, Instant.parse("2020-03-08T15:10:00Z"));
+        System.out.println("===================11");
+        trainServiceImpl.calculateTrainPosition(train, Instant.parse("2020-03-08T15:11:00Z"));
+        System.out.println("===================15");
+        trainServiceImpl.calculateTrainPosition(train, Instant.parse("2020-03-08T15:15:00Z"));
+        System.out.println("===================20");
+        trainServiceImpl.calculateTrainPosition(train, Instant.parse("2020-03-08T15:20:00Z"));
+        return "";
     }
 
 }
