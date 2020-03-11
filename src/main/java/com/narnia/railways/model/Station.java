@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -22,4 +23,7 @@ public class Station {
     private Double latitude;
 
     private Long val;
+
+    @OneToMany(mappedBy = "currentStation", fetch = FetchType.EAGER)
+    private List<Train> trains;
 }

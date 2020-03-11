@@ -3,6 +3,7 @@ package com.narnia.railways.controller;
 import com.narnia.railways.model.Station;
 import com.narnia.railways.model.Train;
 import com.narnia.railways.service.StationServiceImpl;
+import com.narnia.railways.service.TrainService;
 import com.narnia.railways.service.TrainServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +18,11 @@ class HomeController {
 
     private final StationServiceImpl stationServiceImpl;
 
-    private final TrainServiceImpl trainServiceImpl;
+    private final TrainService trainService;
 
-    HomeController(StationServiceImpl stationServiceImpl, TrainServiceImpl trainServiceImpl) {
+    HomeController(StationServiceImpl stationServiceImpl, TrainService trainService) {
         this.stationServiceImpl = stationServiceImpl;
-        this.trainServiceImpl = trainServiceImpl;
+        this.trainService = trainService;
     }
 
 
@@ -61,19 +62,29 @@ class HomeController {
 
     @RequestMapping("/cal")
     public String cal() {
-        Train train = trainServiceImpl.getById(1L);
+        Train train = trainService.getById(1L);
         System.out.println("===================-30");
-        trainServiceImpl.calculateTrainPosition(train, Instant.parse("2020-03-08T14:30:00Z"));
+        trainService.updateTrainState(train, Instant.parse("2020-03-08T14:30:00Z"));
         System.out.println("===================00");
-        trainServiceImpl.calculateTrainPosition(train, Instant.parse("2020-03-08T15:00:00Z"));
+        trainService.updateTrainState(train, Instant.parse("2020-03-08T15:00:00Z"));
         System.out.println("===================10");
-        trainServiceImpl.calculateTrainPosition(train, Instant.parse("2020-03-08T15:10:00Z"));
+        trainService.updateTrainState(train, Instant.parse("2020-03-08T15:10:00Z"));
         System.out.println("===================11");
-        trainServiceImpl.calculateTrainPosition(train, Instant.parse("2020-03-08T15:11:00Z"));
+        trainService.updateTrainState(train, Instant.parse("2020-03-08T15:11:00Z"));
         System.out.println("===================15");
-        trainServiceImpl.calculateTrainPosition(train, Instant.parse("2020-03-08T15:15:00Z"));
+        trainService.updateTrainState(train, Instant.parse("2020-03-08T15:15:00Z"));
         System.out.println("===================20");
-        trainServiceImpl.calculateTrainPosition(train, Instant.parse("2020-03-08T15:20:00Z"));
+        trainService.updateTrainState(train, Instant.parse("2020-03-08T15:20:00Z"));
+        return "";
+    }
+
+    @GetMapping("/calculate")
+    public String calculate(
+            @RequestParam(name = "date") Instant date
+    ) {
+        Train train = trainService.getById(1L);
+        trainService.updateTrainState(train, date);
+        trainService.update(train);
         return "";
     }
 

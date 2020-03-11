@@ -13,65 +13,70 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
-public class TrainServiceImpl {
+public class TrainServiceImpl implements TrainService {
 
     private final TrainDAO trainDAO;
 
     private final TrainPathDAO trainPathDAO;
+
+    private Instant modelingTime;
 
     public TrainServiceImpl(TrainDAO trainDAO, TrainPathDAO trainPathDAO) {
         this.trainDAO = trainDAO;
         this.trainPathDAO = trainPathDAO;
     }
 
+    @Override
     public List<Train> getAll() {
         return trainDAO.list();
     }
 
+    @Override
     public void save(Train train) {
         trainDAO.save(train);
     }
 
+    @Override
     public Train getById(Long id) {
         return trainDAO.getById(id);
     }
 
+    @Override
     public void delete(Train train) {
         trainDAO.delete(train);
     }
 
+    @Override
     public void update(Train train) {
         trainDAO.update(train);
     }
 
-    public void calculateTrainPosition(Train train, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Instant date) {
+    @Override
+    public Train updateTrainState(Train train, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Instant date) {
 
         List<TrainPath> trainPaths = trainPathDAO.getSortedPathForTrain(train);
-        System.out.println("Date: " + date.getEpochSecond());
-        System.out.println("Departure: " + train.getDepartureTime().getEpochSecond());
         if (date.compareTo(train.getDepartureTime()) < 0) {
-            System.out.println("The train is not departure yet.");
-            // add an exception?
-            return;
+            train.setCurrentState("The train is not departure yet.");
+            return train;
         }
 
         if (date.compareTo(train.getDepartureTime()) == 0) {
-            System.out.println("The train departing right now!");
-            return;
+            train.setCurrentState("The train departing right now!");
+            return train;
         }
 
         Instant calc = Instant.from(train.getDepartureTime());
 
-        for (int i = 0; i < trainPaths.size(); i++) {
+        for (TrainPath trainPath : trainPaths) {
 
-            Path path = trainPaths.get(i).getPath();
+            Path path = trainPath.getPath();
 
             // Add weight of line to current modeling time
             calc = calc.plus(path.getWeight(), ChronoUnit.MINUTES);
 
             // If date less or equal to current modeling time - the train on this line
             if (date.compareTo(calc) < 0) {
-                System.out.println("Train between "
+                train.setCurrentState("Train between "
                         + path.getF_node()
                         + " and "
                         + path.getS_node()
@@ -83,10 +88,17 @@ public class TrainServiceImpl {
             calc = calc.plus(path.getS_node().getVal(), ChronoUnit.MINUTES);
 
             if (date.compareTo(calc) < 0) {
-                System.out.println("The train on the station: " + path.getS_node());
+                train.setCurrentState("The train on the station: " + path.getS_node());
+                train.setCurrentStation(path.getS_node());
                 break;
             }
         }
+        return train;
+    }
 
+
+    public void tick() {
+        List<Train> trains = trainDAO.list();
+        trains.stream().map(train -> updateTrainState(train, Instant.now())).forEach(trainDAO::save);
     }
 }
