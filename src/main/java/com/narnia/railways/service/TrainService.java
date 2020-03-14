@@ -18,5 +18,5 @@ public interface TrainService {
 
     void update(Train train);
 
-    Train updateTrainState(Train train, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Instant date);
+    Train coordinateTrainStateWithTime(Train train, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Instant date);
 }

@@ -24,6 +24,9 @@ public class Station {
 
     private Long val;
 
-    @OneToMany(mappedBy = "currentStation", fetch = FetchType.EAGER)
+    @Column(name = "train_capacity")
+    private Integer capacity;
+
+    @OneToMany(mappedBy = "currentStation")
     private List<Train> trains;
 }

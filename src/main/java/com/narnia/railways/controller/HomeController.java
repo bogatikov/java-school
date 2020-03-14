@@ -2,9 +2,10 @@ package com.narnia.railways.controller;
 
 import com.narnia.railways.model.Station;
 import com.narnia.railways.model.Train;
+import com.narnia.railways.service.SimulationServiceImpl;
 import com.narnia.railways.service.StationServiceImpl;
+import com.narnia.railways.service.TicketServiceImpl;
 import com.narnia.railways.service.TrainService;
-import com.narnia.railways.service.TrainServiceImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -20,9 +21,12 @@ class HomeController {
 
     private final TrainService trainService;
 
-    HomeController(StationServiceImpl stationServiceImpl, TrainService trainService) {
+    private final SimulationServiceImpl simulationService;
+
+    HomeController(StationServiceImpl stationServiceImpl, TrainService trainService, SimulationServiceImpl simulationService) {
         this.stationServiceImpl = stationServiceImpl;
         this.trainService = trainService;
+        this.simulationService = simulationService;
     }
 
 
@@ -31,6 +35,12 @@ class HomeController {
         ModelAndView modelAndView = new ModelAndView("stations");
         modelAndView.addObject("stations", stationServiceImpl.getAll());
         return modelAndView;
+    }
+
+    @GetMapping(value = "/tick")
+    public String tick() {
+        simulationService.tick();
+        return "tick";
     }
 
     @GetMapping("/edit")
@@ -64,17 +74,17 @@ class HomeController {
     public String cal() {
         Train train = trainService.getById(1L);
         System.out.println("===================-30");
-        trainService.updateTrainState(train, Instant.parse("2020-03-08T14:30:00Z"));
+        trainService.coordinateTrainStateWithTime(train, Instant.parse("2020-03-08T14:30:00Z"));
         System.out.println("===================00");
-        trainService.updateTrainState(train, Instant.parse("2020-03-08T15:00:00Z"));
+        trainService.coordinateTrainStateWithTime(train, Instant.parse("2020-03-08T15:00:00Z"));
         System.out.println("===================10");
-        trainService.updateTrainState(train, Instant.parse("2020-03-08T15:10:00Z"));
+        trainService.coordinateTrainStateWithTime(train, Instant.parse("2020-03-08T15:10:00Z"));
         System.out.println("===================11");
-        trainService.updateTrainState(train, Instant.parse("2020-03-08T15:11:00Z"));
+        trainService.coordinateTrainStateWithTime(train, Instant.parse("2020-03-08T15:11:00Z"));
         System.out.println("===================15");
-        trainService.updateTrainState(train, Instant.parse("2020-03-08T15:15:00Z"));
+        trainService.coordinateTrainStateWithTime(train, Instant.parse("2020-03-08T15:15:00Z"));
         System.out.println("===================20");
-        trainService.updateTrainState(train, Instant.parse("2020-03-08T15:20:00Z"));
+        trainService.coordinateTrainStateWithTime(train, Instant.parse("2020-03-08T15:20:00Z"));
         return "";
     }
 
@@ -83,7 +93,7 @@ class HomeController {
             @RequestParam(name = "date") Instant date
     ) {
         Train train = trainService.getById(1L);
-        trainService.updateTrainState(train, date);
+        trainService.coordinateTrainStateWithTime(train, date);
         trainService.update(train);
         return "";
     }

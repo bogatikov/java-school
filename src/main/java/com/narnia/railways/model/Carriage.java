@@ -6,18 +6,15 @@ import javax.persistence.*;
 
 @Entity
 @Data
-public class TrainPath {
+public class Carriage {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "number_of_sits")
+    private Long capacity;
+
     @ManyToOne
-    @JoinColumn(name = "train_id")
     private Train train;
-
-    @ManyToOne
-    @JoinColumn(name = "path_id")
-    private Path path;
-
-    private Long path_order;
 }
