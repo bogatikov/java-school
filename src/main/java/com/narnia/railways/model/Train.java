@@ -20,7 +20,7 @@ public class Train {
 
 
     @Column(name = "train_state")
-    private TrainState trainState;
+    private TrainState trainState = TrainState.STOP;
 
     @Column(name = "train_direction")
     private TrainDirect direction = TrainDirect.FORWARD;
@@ -37,12 +37,31 @@ public class Train {
     @ManyToOne
     private Station currentStation;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Station fromStation;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Station toStation;
+
     @OneToOne
     private Path currentPath;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Path nextPath;
 
     @Column(name = "departure_time")
     private Instant departureTime;
 
     @OneToMany(fetch = FetchType.EAGER)
     private List<Path> track;
+
+    private Long moveCounter;
+
+    public void move() {
+        this.moveCounter++;
+    }
+
+    public void resetMoveCounter() {
+        this.moveCounter = 0L;
+    }
 }

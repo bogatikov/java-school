@@ -3,9 +3,12 @@ package com.narnia.railways.service;
 import com.narnia.railways.dao.TrainDAO;
 import com.narnia.railways.model.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.*;
+
+import static com.narnia.railways.model.TrainState.*;
 
 @Service
 public class TrainServiceImpl implements TrainService, Updatable {
@@ -63,7 +66,65 @@ public class TrainServiceImpl implements TrainService, Updatable {
     }
 
     public Train updateTrainState(Train train) {
-        tickCounter.put(train, tickCounter.get(train) + 1);
+        switch (train.getTrainState()) {
+            case WAIT:
+                train.setTrainState(STOP);
+                break;
+
+            case STOP:
+                // Use OOP when you can
+                // functional approach isn't always the best in Java
+                if (train.getFromStation().getVal() - train.getMoveCounter() > 0) {
+                    train.move();
+                } else if (train.getToStation().hasFreePlatform() &&
+                        train.getNextPath().hasFreeway()
+                ) {
+                    // increment occupation counter
+                    train.getToStation().reservePlatform();
+                    train.getNextPath().reserveFreeway();
+                    train.setTrainState(DEPARTURE);
+                } else {
+                    train.setTrainState(WAIT);
+                }
+                break;
+
+            case DEPARTURE:
+                // decrement occupation counter
+                train.getFromStation().departure();
+                // will also reset internal movement counter
+                train.resetMoveCounter();
+                train.setCurrentPath(train.getNextPath());
+                train.setTrainState(MOVEMENT);
+                break;
+
+            case MOVEMENT:
+                if (train.getNextPath().getLength() - train.getMoveCounter() > 0) {
+                    train.move();
+                } else {
+                    train.setTrainState(ARRIVAL);
+                }
+                break;
+
+            case ARRIVAL:
+                // remove reservation from the path
+                train.getNextPath().freeReservation();
+                // also set from an to station from calculated next path
+                train.setNextPath(calculateNextPathForTrain(train));
+                if (train.getDirection().equals(TrainDirect.FORWARD)) {
+                    train.setFromStation(train.getNextPath().getF_node());
+                    train.setToStation(train.getNextPath().getS_node());
+                } else {
+                    train.setFromStation(train.getNextPath().getS_node());
+                    train.setToStation(train.getNextPath().getF_node());
+                }
+                train.setTrainState(STOP);
+                break;
+        }
+
+        return train;
+
+
+        /*tickCounter.put(train, tickCounter.get(train) + 1);
         if (train.getTrainState().equals(TrainState.STOP)) {
             Path path = getNextPath(train);
             if (Objects.isNull(path)) {
@@ -111,10 +172,52 @@ public class TrainServiceImpl implements TrainService, Updatable {
                 train.setTrainState(TrainState.STOP);
                 tickCounter.put(train, 0L);
             }
-        }
-        return train;
+        }*/
+//        return train;
     }
 
+    private Path calculateNextPathForTrain(Train train) {
+        Path path = train.getNextPath();
+        switch (train.getDirection()) {
+            case FORWARD:
+                if (train.getNextPath().getS_node().equals(train.getArrival())) {
+                    train.setDirection(TrainDirect.BACKWARD);
+                } else {
+                    path = train.getTrack().stream()
+                            .filter(
+                                    pth -> pth
+                                            .getF_node()
+                                            .equals(
+                                                    train
+                                                            .getNextPath().getS_node()
+                                            )
+                            )
+                            .findFirst()
+                            .orElseThrow();
+                }
+                break;
+            case BACKWARD:
+                if (train.getNextPath().getF_node().equals(train.getDeparture())) {
+                    train.setDirection(TrainDirect.FORWARD);
+                } else {
+                    path = train.getTrack().stream()
+                            .filter(
+                                    pth -> pth
+                                            .getS_node()
+                                            .equals(
+                                                    train
+                                                            .getNextPath().getF_node()
+                                            )
+                            )
+                            .findFirst()
+                            .orElseThrow();
+                }
+                break;
+        }
+        return path;
+    }
+
+    @Transactional
     public void tick() {
         List<Train> trains = trainDAO.list();
         trains.forEach(train -> {
@@ -132,7 +235,7 @@ public class TrainServiceImpl implements TrainService, Updatable {
             throw new RuntimeException("Train " + train.getId() + " doesn't have a track");
         }
 
-        if (train.getTrainState().equals(TrainState.MOVEMENT)) {
+        if (train.getTrainState().equals(MOVEMENT)) {
             return null;
         }
         Path path;

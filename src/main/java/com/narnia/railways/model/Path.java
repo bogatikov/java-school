@@ -21,8 +21,24 @@ public class Path {
     @ManyToOne
     private Station s_node;
 
-    private Long weight;
+    @Column(name = "reserved")
+    private Boolean reserved;
+
+    @Column(name = "weight")
+    private Long length;
 
     @OneToOne(mappedBy = "currentPath")
     private Train train;
+
+    public boolean hasFreeway() {
+        return !reserved;
+    }
+
+    public void reserveFreeway() {
+        this.reserved = true;
+    }
+
+    public void freeReservation() {
+        this.reserved = false;
+    }
 }

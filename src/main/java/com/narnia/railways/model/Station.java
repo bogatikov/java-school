@@ -29,4 +29,16 @@ public class Station {
 
     @OneToMany(mappedBy = "currentStation")
     private List<Train> trains;
+
+    public boolean hasFreePlatform() {
+        return this.capacity > 0;
+    }
+
+    public void departure() {
+        this.capacity = this.capacity + 1;
+    }
+
+    public void reservePlatform() {
+        this.capacity--;
+    }
 }
