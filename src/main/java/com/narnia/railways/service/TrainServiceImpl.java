@@ -2,11 +2,9 @@ package com.narnia.railways.service;
 
 import com.narnia.railways.dao.TrainDAO;
 import com.narnia.railways.model.*;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -55,50 +53,6 @@ public class TrainServiceImpl implements TrainService, Updatable {
         trainDAO.update(train);
     }
 
-    @Override
-    public Train coordinateTrainStateWithTime(Train train, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Instant date) {
-
-        if (train.getTrainState() != TrainState.MOVEMENT) {
-            return train;
-        }
-
-        train.setDepartureTime(date);
-
-        int idx = train.getTrack().indexOf(train.getCurrentPath());
-
-        if (idx == train.getTrack().size() - 1) {
-            switchTrainDirection(train);
-        }
-
-
-        Instant calc = Instant.from(train.getDepartureTime());
-
-        for (Path path : train.getTrack()) {
-
-            // Add weight of line to current modeling time
-            calc = calc.plus(path.getWeight(), ChronoUnit.MINUTES);
-
-            // If date less or equal to current modeling time - the train on this line
-            if (date.compareTo(calc) < 0) {
-                train.setCurrentState("Train between "
-                        + path.getF_node()
-                        + " and "
-                        + path.getS_node()
-                );
-                break;
-            }
-
-            // Add node weight to current modeling time
-            calc = calc.plus(path.getS_node().getVal(), ChronoUnit.MINUTES);
-
-            if (date.compareTo(calc) < 0) {
-                train.setCurrentState("The train on the station: " + path.getS_node());
-                train.setCurrentStation(path.getS_node());
-                break;
-            }
-        }
-        return train;
-    }
 
     private void switchTrainDirection(Train train) {
         if (train.getDirection().equals(TrainDirect.FORWARD)) {
@@ -116,9 +70,9 @@ public class TrainServiceImpl implements TrainService, Updatable {
                 return train;
             }
             Station to = train.getDirection().equals(TrainDirect.FORWARD)
-                     ? path.getS_node() : path.getF_node();
+                    ? path.getS_node() : path.getF_node();
             Station from = train.getDirection().equals(TrainDirect.FORWARD)
-                     ? path.getF_node() : path.getS_node();
+                    ? path.getF_node() : path.getS_node();
             if (tickCounter.get(train) >= from.getVal() && Objects.isNull(path.getTrain()) && to.getCapacity() > 0) {
                 to.setCapacity(to.getCapacity() - 1);
                 from.setCapacity(from.getCapacity() + 1);

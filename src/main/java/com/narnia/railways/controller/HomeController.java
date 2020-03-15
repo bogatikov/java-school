@@ -69,33 +69,4 @@ class HomeController {
         return "redirect:/";
     }
 
-
-    @RequestMapping("/cal")
-    public String cal() {
-        Train train = trainService.getById(1L);
-        System.out.println("===================-30");
-        trainService.coordinateTrainStateWithTime(train, Instant.parse("2020-03-08T14:30:00Z"));
-        System.out.println("===================00");
-        trainService.coordinateTrainStateWithTime(train, Instant.parse("2020-03-08T15:00:00Z"));
-        System.out.println("===================10");
-        trainService.coordinateTrainStateWithTime(train, Instant.parse("2020-03-08T15:10:00Z"));
-        System.out.println("===================11");
-        trainService.coordinateTrainStateWithTime(train, Instant.parse("2020-03-08T15:11:00Z"));
-        System.out.println("===================15");
-        trainService.coordinateTrainStateWithTime(train, Instant.parse("2020-03-08T15:15:00Z"));
-        System.out.println("===================20");
-        trainService.coordinateTrainStateWithTime(train, Instant.parse("2020-03-08T15:20:00Z"));
-        return "";
-    }
-
-    @GetMapping("/calculate")
-    public String calculate(
-            @RequestParam(name = "date") Instant date
-    ) {
-        Train train = trainService.getById(1L);
-        trainService.coordinateTrainStateWithTime(train, date);
-        trainService.update(train);
-        return "";
-    }
-
 }

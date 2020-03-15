@@ -27,12 +27,12 @@ public class SimulationServiceImpl {
         simulatingEntities.remove(updatable);
     }
 
-//    @Scheduled(fixedDelay = 60_000L)
+    //    @Scheduled(fixedDelay = 60_000L)
     public void tick() {
         this.currentSimulationTime = this.currentSimulationTime.plus(5, ChronoUnit.MINUTES);
         System.out.println("Current simulation time is " + currentSimulationTime);
-        for (Updatable entity:
-             simulatingEntities) {
+        for (Updatable entity :
+                simulatingEntities) {
             entity.setSimulationTime(currentSimulationTime);
             entity.tick();
         }

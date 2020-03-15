@@ -1,9 +1,7 @@
 package com.narnia.railways.service;
 
 import com.narnia.railways.model.Train;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.Instant;
 import java.util.List;
 
 public interface TrainService {
@@ -17,6 +15,4 @@ public interface TrainService {
     void delete(Train train);
 
     void update(Train train);
-
-    Train coordinateTrainStateWithTime(Train train, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Instant date);
 }
