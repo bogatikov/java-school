@@ -27,9 +27,6 @@ public class Path {
     @Column(name = "weight")
     private Long length;
 
-    @OneToOne(mappedBy = "currentPath")
-    private Train train;
-
     public boolean hasFreeway() {
         return !reserved;
     }

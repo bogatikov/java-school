@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="com.narnia.railways.model.Station" %>
+
 <%--
   Created by IntelliJ IDEA.
   User: xiaomi

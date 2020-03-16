@@ -27,8 +27,11 @@ public class Station {
     @Column(name = "train_capacity")
     private Integer capacity;
 
-    @OneToMany(mappedBy = "currentStation")
-    private List<Train> trains;
+    @OneToMany(mappedBy = "toStation")
+    private List<Train> arrivingTrains;
+
+    @OneToMany(mappedBy = "fromStation")
+    private List<Train> departingTrains;
 
     public boolean hasFreePlatform() {
         return this.capacity > 0;

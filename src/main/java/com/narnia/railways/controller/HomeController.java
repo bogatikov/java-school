@@ -38,9 +38,11 @@ class HomeController {
     }
 
     @GetMapping(value = "/tick")
-    public String tick() {
+    public ModelAndView tick() {
+        ModelAndView modelAndView = new ModelAndView("tick");
         simulationService.tick();
-        return "tick";
+        modelAndView.addObject("trains", trainService.getAll());
+        return modelAndView;
     }
 
     @GetMapping("/edit")

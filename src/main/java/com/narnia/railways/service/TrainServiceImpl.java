@@ -87,7 +87,6 @@ public class TrainServiceImpl implements TrainService, Updatable {
                 train.getFromStation().departure();
                 // will also reset internal movement counter
                 train.resetMoveCounter();
-                train.setCurrentPath(train.getNextPath());
                 train.setTrainState(MOVEMENT);
                 break;
 
@@ -101,7 +100,6 @@ public class TrainServiceImpl implements TrainService, Updatable {
 
             case ARRIVAL:
                 // remove reservation from the path
-//                train.getNextPath().freeReservation();
                 pathService.freeReservation(train.getNextPath());
                 // also set from an to station from calculated next path
                 train.setNextPath(calculateNextPathForTrain(train));
@@ -120,41 +118,24 @@ public class TrainServiceImpl implements TrainService, Updatable {
 
     private Path calculateNextPathForTrain(Train train) {
         Path path = train.getNextPath();
-        switch (train.getDirection()) {
-            case FORWARD:
-                if (train.getNextPath().getS_node().equals(train.getArrival())) {
-                    train.setDirection(TrainDirect.BACKWARD);
-                } else {
-                    path = train.getTrack().stream()
-                            .filter(
-                                    pth -> pth
-                                            .getF_node()
-                                            .equals(
-                                                    train
-                                                            .getNextPath().getS_node()
-                                            )
-                            )
-                            .findFirst()
-                            .orElseThrow();
-                }
-                break;
-            case BACKWARD:
-                if (train.getNextPath().getF_node().equals(train.getDeparture())) {
-                    train.setDirection(TrainDirect.FORWARD);
-                } else {
-                    path = train.getTrack().stream()
-                            .filter(
-                                    pth -> pth
-                                            .getS_node()
-                                            .equals(
-                                                    train
-                                                            .getNextPath().getF_node()
-                                            )
-                            )
-                            .findFirst()
-                            .orElseThrow();
-                }
-                break;
+        if (train.getTrack().size() <= 1)
+            return path;
+
+        int idx = train.getTrack().indexOf(path);
+
+        if (idx == train.getTrack().size() - 1  && train.getDirection().equals(TrainDirect.FORWARD)) {
+            train.setDirection(TrainDirect.BACKWARD);
+            return train.getTrack().get(idx);
+        }
+        if (idx == 0 && train.getDirection().equals(TrainDirect.BACKWARD)) {
+            train.setDirection(TrainDirect.FORWARD);
+            return train.getTrack().get(idx);
+        }
+        if (train.getDirection().equals(TrainDirect.FORWARD)) {
+            return train.getTrack().get(idx + 1);
+        }
+        if (train.getDirection().equals(TrainDirect.BACKWARD)) {
+            return train.getTrack().get(idx - 1);
         }
         return path;
     }
@@ -168,31 +149,7 @@ public class TrainServiceImpl implements TrainService, Updatable {
         });
         trains.stream()
                 .map(this::updateTrainState)
-//                .map(train -> coordinateTrainStateWithTime(train, modelingTime))
                 .forEach(trainDAO::update);
-    }
-
-    public Path getNextPath(Train train) {
-        if (train.getTrack().size() == 0) {
-            throw new RuntimeException("Train " + train.getId() + " doesn't have a track");
-        }
-
-        if (train.getTrainState().equals(MOVEMENT)) {
-            return null;
-        }
-        Path path;
-        if (train.getDirection().equals(TrainDirect.FORWARD)) {
-            Optional<Path> first = train.getTrack().stream()
-                    .filter(pth -> pth.getF_node().equals(train.getCurrentStation()))
-                    .findFirst();
-            path = first.orElseThrow();
-        } else {
-            Optional<Path> first = train.getTrack().stream()
-                    .filter(pth -> pth.getS_node().equals(train.getCurrentStation()))
-                    .findFirst();
-            path = first.orElseThrow();
-        }
-        return path;
     }
 
     @Override

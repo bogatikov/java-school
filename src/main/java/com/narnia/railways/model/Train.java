@@ -25,34 +25,16 @@ public class Train {
     @Column(name = "train_direction")
     private TrainDirect direction = TrainDirect.FORWARD;
 
-    @Column(name = "current_state")
-    private String currentState;
-
-    @ManyToOne
-    private Station departure;
-
-    @ManyToOne
-    private Station arrival;
-
-    @ManyToOne
-    private Station currentStation;
-
     @ManyToOne(cascade = CascadeType.ALL)
     private Station fromStation;
 
     @ManyToOne(cascade = CascadeType.ALL)
     private Station toStation;
 
-    @OneToOne
-    private Path currentPath;
-
     @OneToOne(cascade = CascadeType.ALL)
     private Path nextPath;
 
-    @Column(name = "departure_time")
-    private Instant departureTime;
-
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Path> track;
 
     private Long moveCounter;
