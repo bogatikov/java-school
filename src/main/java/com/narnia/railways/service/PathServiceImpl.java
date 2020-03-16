@@ -35,8 +35,13 @@ public class PathServiceImpl {
         pathDAO.update(path);
     }
 
-    public void get() {
-
+    public void reserveFreeway(Path path) {
+        path.reserveFreeway();
+        pathDAO.update(path);
     }
 
+    public void freeReservation(Path path) {
+        path.freeReservation();
+        pathDAO.update(path);
+    }
 }

@@ -21,12 +21,15 @@ public class TrainServiceImpl implements TrainService, Updatable {
 
     private final StationServiceImpl stationService;
 
+    private final PathServiceImpl pathService;
+
     private Map<Train, Long> tickCounter = new HashMap<>();
 
-    public TrainServiceImpl(TrainDAO trainDAO, SimulationServiceImpl simulationService, StationServiceImpl stationService) {
+    public TrainServiceImpl(TrainDAO trainDAO, SimulationServiceImpl simulationService, StationServiceImpl stationService, PathServiceImpl pathService) {
         this.trainDAO = trainDAO;
         this.simulationService = simulationService;
         this.stationService = stationService;
+        this.pathService = pathService;
 
         simulationService.addToSimulation(this);
     }
@@ -56,15 +59,6 @@ public class TrainServiceImpl implements TrainService, Updatable {
         trainDAO.update(train);
     }
 
-
-    private void switchTrainDirection(Train train) {
-        if (train.getDirection().equals(TrainDirect.FORWARD)) {
-            train.setDirection(TrainDirect.BACKWARD);
-            return;
-        }
-        train.setDirection(TrainDirect.FORWARD);
-    }
-
     public Train updateTrainState(Train train) {
         switch (train.getTrainState()) {
             case WAIT:
@@ -81,7 +75,7 @@ public class TrainServiceImpl implements TrainService, Updatable {
                 ) {
                     // increment occupation counter
                     train.getToStation().reservePlatform();
-                    train.getNextPath().reserveFreeway();
+                    pathService.reserveFreeway(train.getNextPath());
                     train.setTrainState(DEPARTURE);
                 } else {
                     train.setTrainState(WAIT);
@@ -107,7 +101,8 @@ public class TrainServiceImpl implements TrainService, Updatable {
 
             case ARRIVAL:
                 // remove reservation from the path
-                train.getNextPath().freeReservation();
+//                train.getNextPath().freeReservation();
+                pathService.freeReservation(train.getNextPath());
                 // also set from an to station from calculated next path
                 train.setNextPath(calculateNextPathForTrain(train));
                 if (train.getDirection().equals(TrainDirect.FORWARD)) {
@@ -120,60 +115,7 @@ public class TrainServiceImpl implements TrainService, Updatable {
                 train.setTrainState(STOP);
                 break;
         }
-
         return train;
-
-
-        /*tickCounter.put(train, tickCounter.get(train) + 1);
-        if (train.getTrainState().equals(TrainState.STOP)) {
-            Path path = getNextPath(train);
-            if (Objects.isNull(path)) {
-                return train;
-            }
-            Station to = train.getDirection().equals(TrainDirect.FORWARD)
-                    ? path.getS_node() : path.getF_node();
-            Station from = train.getDirection().equals(TrainDirect.FORWARD)
-                    ? path.getF_node() : path.getS_node();
-            if (tickCounter.get(train) >= from.getVal() && Objects.isNull(path.getTrain()) && to.getCapacity() > 0) {
-                to.setCapacity(to.getCapacity() - 1);
-                from.setCapacity(from.getCapacity() + 1);
-                stationService.update(to);
-                stationService.update(from);
-                train.setTrainState(TrainState.MOVEMENT);
-                train.setCurrentPath(path);
-                train.setCurrentStation(null);
-                tickCounter.put(train, 0L);
-            } else {
-                train.setTrainState(TrainState.WAIT);
-            }
-        }
-
-        if (train.getTrainState().equals(TrainState.WAIT)) {
-            train.setTrainState(TrainState.STOP);
-        }
-
-        if (train.getTrainState().equals(TrainState.MOVEMENT)) {
-            if (train.getCurrentPath().getWeight().equals(tickCounter.get(train))) {
-                train.setCurrentStation(train.getDirection() ==
-                        TrainDirect.FORWARD ? train.getCurrentPath().getS_node() :
-                        train.getCurrentPath().getF_node());
-
-                if (train.getDirection().equals(TrainDirect.FORWARD)
-                        &&
-                        train.getCurrentStation().equals(train.getArrival())) {
-                    switchTrainDirection(train);
-                }
-                if (train.getDirection().equals(TrainDirect.BACKWARD)
-                        &&
-                        train.getCurrentStation().equals(train.getDeparture())) {
-                    switchTrainDirection(train);
-                }
-                train.setCurrentPath(null);
-                train.setTrainState(TrainState.STOP);
-                tickCounter.put(train, 0L);
-            }
-        }*/
-//        return train;
     }
 
     private Path calculateNextPathForTrain(Train train) {
