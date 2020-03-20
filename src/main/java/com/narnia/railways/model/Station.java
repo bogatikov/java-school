@@ -1,6 +1,7 @@
 package com.narnia.railways.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
@@ -8,7 +9,8 @@ import java.util.List;
 
 @Entity
 @Data
-@ToString(of = {"id", "name", "longitude", "latitude"})
+@ToString(of = {"id"})
+@EqualsAndHashCode(of = {"id"})
 public class Station {
 
     @Id

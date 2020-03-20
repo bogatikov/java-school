@@ -65,9 +65,25 @@
                 </td>
             </tr>
         </c:forEach>
-
-
     </table>
+
+    <c:forEach items="${schedules.keySet()}" var="station">
+        <div>
+            Table for station <b>${station.name}</b>
+            <table>
+                <tr>
+                    <td>Train</td>
+                    <td>Will arrive through</td>
+                </tr>
+                <c:forEach items="${schedules.get(station)}" var="schedule">
+                    <tr>
+                        <td>${schedule.getTrain().getId()}</td>
+                        <td>${schedule.getArriveThrough()}</td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </div>
+    </c:forEach>
 
 
 </div>

@@ -1,12 +1,16 @@
 package com.narnia.railways.service;
 
 import com.narnia.railways.dao.TrainDAO;
-import com.narnia.railways.model.*;
+import com.narnia.railways.model.Path;
+import com.narnia.railways.model.Train;
+import com.narnia.railways.model.TrainDirect;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.narnia.railways.model.TrainState.*;
 
@@ -17,21 +21,13 @@ public class TrainServiceImpl implements TrainService, Updatable {
 
     private Instant modelingTime;
 
-    private final SimulationServiceImpl simulationService;
-
-    private final StationServiceImpl stationService;
-
     private final PathServiceImpl pathService;
 
     private Map<Train, Long> tickCounter = new HashMap<>();
 
-    public TrainServiceImpl(TrainDAO trainDAO, SimulationServiceImpl simulationService, StationServiceImpl stationService, PathServiceImpl pathService) {
+    public TrainServiceImpl(TrainDAO trainDAO, PathServiceImpl pathService) {
         this.trainDAO = trainDAO;
-        this.simulationService = simulationService;
-        this.stationService = stationService;
         this.pathService = pathService;
-
-        simulationService.addToSimulation(this);
     }
 
     @Override
@@ -99,6 +95,7 @@ public class TrainServiceImpl implements TrainService, Updatable {
                 break;
 
             case ARRIVAL:
+                train.resetMoveCounter();
                 // remove reservation from the path
                 pathService.freeReservation(train.getNextPath());
                 // also set from an to station from calculated next path
@@ -118,12 +115,13 @@ public class TrainServiceImpl implements TrainService, Updatable {
 
     private Path calculateNextPathForTrain(Train train) {
         Path path = train.getNextPath();
+        // TODO check for plying trains between only two station (For one path)
         if (train.getTrack().size() <= 1)
             return path;
 
         int idx = train.getTrack().indexOf(path);
 
-        if (idx == train.getTrack().size() - 1  && train.getDirection().equals(TrainDirect.FORWARD)) {
+        if (idx == train.getTrack().size() - 1 && train.getDirection().equals(TrainDirect.FORWARD)) {
             train.setDirection(TrainDirect.BACKWARD);
             return train.getTrack().get(idx);
         }
@@ -141,12 +139,9 @@ public class TrainServiceImpl implements TrainService, Updatable {
     }
 
     @Transactional
+    @Override
     public void tick() {
         List<Train> trains = trainDAO.list();
-        trains.forEach(train -> {
-            tickCounter.putIfAbsent(train, 0L);
-            System.out.println("Train " + train.getId() + " " + tickCounter.get(train));
-        });
         trains.stream()
                 .map(this::updateTrainState)
                 .forEach(trainDAO::update);

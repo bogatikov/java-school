@@ -37,11 +37,19 @@ class HomeController {
         return modelAndView;
     }
 
+    @GetMapping(value = "/schedule")
+    public ModelAndView getSchedule() {
+        ModelAndView modelAndView = new ModelAndView("schedule");
+        modelAndView.addObject("schedules", stationServiceImpl.getScheduleForStations());
+        return modelAndView;
+    }
+
     @GetMapping(value = "/tick")
     public ModelAndView tick() {
         ModelAndView modelAndView = new ModelAndView("tick");
         simulationService.tick();
         modelAndView.addObject("trains", trainService.getAll());
+        modelAndView.addObject("schedules", stationServiceImpl.getScheduleForStations());
         return modelAndView;
     }
 
