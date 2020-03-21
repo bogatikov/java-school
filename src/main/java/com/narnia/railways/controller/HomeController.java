@@ -1,16 +1,13 @@
 package com.narnia.railways.controller;
 
 import com.narnia.railways.model.Station;
-import com.narnia.railways.model.Train;
 import com.narnia.railways.service.SimulationServiceImpl;
 import com.narnia.railways.service.StationServiceImpl;
-import com.narnia.railways.service.TicketServiceImpl;
 import com.narnia.railways.service.TrainService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.time.Instant;
 import java.util.Objects;
 
 @Controller

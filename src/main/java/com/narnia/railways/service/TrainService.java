@@ -8,6 +8,8 @@ public interface TrainService {
 
     List<Train> getAll();
 
+    List<Train> getActiveTrains(); // Active trains have at least one path in their track;
+
     void save(Train train);
 
     Train getById(Long id);

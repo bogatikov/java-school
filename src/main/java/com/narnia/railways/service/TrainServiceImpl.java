@@ -32,8 +32,14 @@ public class TrainServiceImpl implements TrainService, Updatable {
 
     @Override
     public List<Train> getAll() {
-        return trainDAO.list();
+        return trainDAO.findAll();
     }
+
+    @Override
+    public List<Train> getActiveTrains() {
+        return trainDAO.findAllActiveTrains();
+    }
+
 
     @Override
     public void save(Train train) {
@@ -116,8 +122,14 @@ public class TrainServiceImpl implements TrainService, Updatable {
     private Path calculateNextPathForTrain(Train train) {
         Path path = train.getNextPath();
         // TODO check for plying trains between only two station (For one path)
-        if (train.getTrack().size() <= 1)
+        if (train.getTrack().size() == 1) {
+            if (train.getDirection().equals(TrainDirect.FORWARD)) {
+                train.setDirection(TrainDirect.BACKWARD);
+            } else {
+                train.setDirection(TrainDirect.FORWARD);
+            }
             return path;
+        }
 
         int idx = train.getTrack().indexOf(path);
 
@@ -141,8 +153,7 @@ public class TrainServiceImpl implements TrainService, Updatable {
     @Transactional
     @Override
     public void tick() {
-        List<Train> trains = trainDAO.list();
-        trains.stream()
+        this.getActiveTrains().stream()
                 .map(this::updateTrainState)
                 .forEach(trainDAO::update);
     }

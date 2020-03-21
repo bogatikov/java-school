@@ -50,7 +50,7 @@ public class StationServiceImpl implements StationService {
                 });
 
         trainService
-                .getAll()
+                .getActiveTrains()
                 .forEach(train -> calculateTrainSchedule(train, schedule));
 
         return schedule;

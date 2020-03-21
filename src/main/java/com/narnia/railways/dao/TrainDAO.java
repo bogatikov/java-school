@@ -22,8 +22,13 @@ public class TrainDAO {
         sessionFactory.getCurrentSession().save(train);
     }
 
-    public List<Train> list() {
+    public List<Train> findAll() {
         TypedQuery<Train> query = sessionFactory.getCurrentSession().createQuery("from Train");
+        return query.getResultList();
+    }
+
+    public List<Train> findAllActiveTrains() {
+        TypedQuery<Train> query = sessionFactory.getCurrentSession().createQuery("from Train t where t.track.size > 0");
         return query.getResultList();
     }
 

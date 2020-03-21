@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.time.Instant;
 import java.util.List;
 
 @Entity
@@ -17,7 +16,6 @@ public class Train {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
 
     @Column(name = "train_state")
     private TrainState trainState = TrainState.STOP;
