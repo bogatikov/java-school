@@ -3,6 +3,7 @@ package com.narnia.railways.controller;
 import com.narnia.railways.model.Station;
 import com.narnia.railways.service.SimulationServiceImpl;
 import com.narnia.railways.service.StationServiceImpl;
+import com.narnia.railways.service.TimeSimulationService;
 import com.narnia.railways.service.TrainService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +21,13 @@ class HomeController {
 
     private final SimulationServiceImpl simulationService;
 
-    HomeController(StationServiceImpl stationServiceImpl, TrainService trainService, SimulationServiceImpl simulationService) {
+    private final TimeSimulationService timeSimulationService;
+
+    HomeController(StationServiceImpl stationServiceImpl, TrainService trainService, SimulationServiceImpl simulationService, TimeSimulationService timeSimulationService) {
         this.stationServiceImpl = stationServiceImpl;
         this.trainService = trainService;
         this.simulationService = simulationService;
+        this.timeSimulationService = timeSimulationService;
     }
 
 
@@ -45,7 +49,8 @@ class HomeController {
     public ModelAndView tick() {
         ModelAndView modelAndView = new ModelAndView("tick");
         simulationService.tick();
-        modelAndView.addObject("trains", trainService.getAll());
+        modelAndView.addObject("currentModelTime", timeSimulationService.getCurrentSimulationTime());
+        modelAndView.addObject("trains", trainService.getActiveTrains());
         modelAndView.addObject("schedules", stationServiceImpl.getScheduleForStations());
         return modelAndView;
     }

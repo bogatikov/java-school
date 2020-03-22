@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.narnia.railways.model.TrainState.*;
 
@@ -19,11 +17,7 @@ public class TrainServiceImpl implements TrainService, Updatable {
 
     private final TrainDAO trainDAO;
 
-    private Instant modelingTime;
-
     private final PathServiceImpl pathService;
-
-    private Map<Train, Long> tickCounter = new HashMap<>();
 
     public TrainServiceImpl(TrainDAO trainDAO, PathServiceImpl pathService) {
         this.trainDAO = trainDAO;
@@ -156,10 +150,5 @@ public class TrainServiceImpl implements TrainService, Updatable {
         this.getActiveTrains().stream()
                 .map(this::updateTrainState)
                 .forEach(trainDAO::update);
-    }
-
-    @Override
-    public void setSimulationTime(Instant instant) {
-        modelingTime = instant;
     }
 }

@@ -17,9 +17,12 @@ public class StationServiceImpl implements StationService {
 
     private final TrainService trainService;
 
-    public StationServiceImpl(StationDAO stationDAO, TrainService trainService) {
+    private final TimeSimulationService timeSimulationService;
+
+    public StationServiceImpl(StationDAO stationDAO, TrainService trainService, TimeSimulationService timeSimulationService) {
         this.stationDAO = stationDAO;
         this.trainService = trainService;
+        this.timeSimulationService = timeSimulationService;
     }
 
     public List<Station> getAll() {
@@ -72,46 +75,65 @@ public class StationServiceImpl implements StationService {
          *    For this case train will be on this station only for ${station.val - moveCounter} ticks
          * 2. The train has no possible to departure `cause no freeway or the ${train.toStation} capacity is zero now.
          *    For this case the train will be on the next station for ${path.length} ticks
+         *
+         * + 1 - ticks takes by ARRIVAL AND DEPARTURE.
          */
-        long prev = 0;
-        if (train.getTrainState().equals(TrainState.MOVEMENT)) {
-            prev = path.getLength() - train.getMoveCounter();
-            schedule.get(train.getToStation()).add(new TrainScheduleDTO(train, prev));
-            prev += train.getToStation().getVal();
-        } else if (train.getTrainState().equals(TrainState.STOP) || train.getTrainState().equals(TrainState.WAIT)) {
-            if (train.getFromStation().getVal() - train.getMoveCounter() > 0) {
-                prev = train.getFromStation().getVal() - train.getMoveCounter();
-            }
-            prev += path.getLength();
-            schedule.get(train.getToStation()).add(new TrainScheduleDTO(train, prev));
-            prev += train.getToStation().getVal();
-        } else if (train.getTrainState().equals(TrainState.DEPARTURE)) {
-            prev = path.getLength();
-            schedule.get(train.getToStation()).add(new TrainScheduleDTO(train, prev));
-            prev += train.getToStation().getVal();
-        } else if (train.getTrainState().equals(TrainState.ARRIVAL)) {
-            schedule.get(train.getToStation()).add(new TrainScheduleDTO(train, prev));
-            prev += train.getToStation().getVal();
-        }
-        if (train.getDirection().equals(TrainDirect.FORWARD)) {
+        long ticksToStation = 0;
+        switch (train.getTrainState()) {
+            case MOVEMENT:
+                ticksToStation = path.getLength() - train.getMoveCounter() + 1; // and +1 arrive tick train will be at the station through ticks
+                putStationScheduleForTrain(train.getToStation(), train, ticksToStation, schedule);
+                ticksToStation += train.getToStation().getVal() + 1 + 1; // train will be departed from the station through ticks
+                break;
+            case WAIT:
+                ticksToStation = path.getLength() + 1 + 1; // train will be at the station through path length + one tick to switch to STOP state and one tick to departure
+                putStationScheduleForTrain(train.getToStation(), train, ticksToStation, schedule);
+                ticksToStation += train.getToStation().getVal() + 1 + 1;
+                break;
+            case STOP:
+                if (train.getFromStation().getVal() - train.getMoveCounter() > 0) {
+                    ticksToStation = train.getFromStation().getVal() - train.getMoveCounter();
+                }
+                ticksToStation += path.getLength() + 1 + 1 + 1;
+                putStationScheduleForTrain(train.getToStation(), train, ticksToStation, schedule);
+                ticksToStation += train.getToStation().getVal() + 1;
+                break;
+            case ARRIVAL:
+                putStationScheduleForTrain(train.getToStation(), train, ticksToStation, schedule);
+                ticksToStation += train.getToStation().getVal() + 1 + 1;
+                break;
+            case DEPARTURE:
+                ticksToStation = path.getLength() + 1 ;
+                putStationScheduleForTrain(train.getToStation(), train, ticksToStation, schedule);
+                ticksToStation += train.getToStation().getVal() + 1 + 1;
+                break;
 
-            for (int i = idx + 1; i < track.size(); i++) {
-                Path currentPath = track.get(i);
-                prev += currentPath.getLength();
-                schedule.get(currentPath.getS_node()).add(
-                        new TrainScheduleDTO(train, prev)
-                );
-                prev += currentPath.getS_node().getVal();
-            }
-        } else {
-            for (int i = idx - 1; i >= 0; i--) {
-                Path currentPath = track.get(i);
-                prev += currentPath.getLength();
-                schedule.get(currentPath.getF_node()).add(
-                        new TrainScheduleDTO(train, prev)
-                );
-                prev += currentPath.getF_node().getVal();
-            }
         }
+        switch (train.getDirection()) {
+            case FORWARD:
+                for (int i = idx + 1; i < track.size(); i++) {
+                    Path currentPath = track.get(i);
+                    ticksToStation += currentPath.getLength() + 1 + 1;
+                    putStationScheduleForTrain(currentPath.getS_node(), train, ticksToStation, schedule);
+                    ticksToStation += currentPath.getS_node().getVal() + 1 + 1;
+                }
+                break;
+            case BACKWARD:
+                for (int i = idx - 1; i >= 0; i--) {
+                    Path currentPath = track.get(i);
+                    ticksToStation += currentPath.getLength() + 1 + 1;
+                    putStationScheduleForTrain(currentPath.getF_node(), train, ticksToStation, schedule);
+                    ticksToStation += currentPath.getF_node().getVal() + 1 + 1;
+                }
+                break;
+        }
+    }
+
+    private void putStationScheduleForTrain(Station station, Train train, Long ticks, Map<Station, List<TrainScheduleDTO>> schedule) {
+        schedule.get(station).add(new TrainScheduleDTO(
+                train,
+                ticks,
+                timeSimulationService.convertTicksToTime(ticks)
+        ));
     }
 }

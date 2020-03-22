@@ -14,8 +14,20 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <title>New Customer</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+    </style>
 </head>
 <body>
+<div>
+    Current Time: ${currentModelTime}
+</div>
 <div align="center">
     <form:form action="/tick" method="GET">
         <table border="0" cellpadding="5">
@@ -54,10 +66,12 @@
                         <c:when test="${train.trainState.equals(TrainState.STOP)}">
                             <c:choose>
                                 <c:when test="${train.fromStation.val - train.moveCounter > 0}">
-                                    The train <b>${train.id}</b> waiting for passengers on station <b>${train.fromStation.name}</b>
+                                    The train <b>${train.id}</b> waiting for passengers on station
+                                    <b>${train.fromStation.name}</b>
                                 </c:when>
                                 <c:when test="${train.fromStation.val - train.moveCounter > 0}">
-                                    The train <b>${train.id}</b> waiting for departing possibility to <b>${train.toStation.name}</b>
+                                    The train <b>${train.id}</b> waiting for departing possibility to
+                                    <b>${train.toStation.name}</b>
                                 </c:when>
                             </c:choose>
                         </c:when>
@@ -68,7 +82,7 @@
     </table>
 
     <c:forEach items="${schedules.keySet()}" var="station">
-        <div>
+        <div style="float: left; margin: 5px 5px 5px 5px">
             Table for station <b>${station.name}</b>
             <table>
                 <tr>
@@ -78,7 +92,23 @@
                 <c:forEach items="${schedules.get(station)}" var="schedule">
                     <tr>
                         <td>${schedule.getTrain().getId()}</td>
-                        <td>${schedule.getArriveThrough()}</td>
+                        <td>
+                            <c:choose>
+                                <c:when test="${(schedule.getArriveThrough() == 0 && schedule.getTrain().getTrainState().equals(TrainState.ARRIVAL))}">
+                                    TRAIN ARRIVAL
+                                </c:when>
+                                <c:when test="${schedule.getTrain().getFromStation().equals(station) && schedule.getTrain().getTrainState().equals(TrainState.DEPARTURE)}">
+                                    TRAIN DEPARTURE
+                                </c:when>
+                                <c:otherwise>
+                                    ${schedule.getArrivalTime()}
+                                </c:otherwise>
+                            </c:choose>
+<%--                                ${(schedule.getArriveThrough() == 0) ? "TRAIN ARRIVAL" : schedule.getArrivalTime()}--%>
+                            <b>(${schedule.getArriveThrough()})</b>
+<%--                            --%>
+<%--                            ${schedule.getTrain().getFromStation().equals(station) && schedule.getTrain().getTrainState().equals(TrainState.DEPARTURE) ? "TRAIN DEPARTURE" : schedule.getArrivalTime()}--%>
+                        </td>
                     </tr>
                 </c:forEach>
             </table>
