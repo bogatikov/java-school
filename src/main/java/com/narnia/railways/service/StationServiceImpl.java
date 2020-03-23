@@ -96,14 +96,14 @@ public class StationServiceImpl implements StationService {
                 }
                 ticksToStation += path.getLength() + 1 + 1 + 1;
                 putStationScheduleForTrain(train.getToStation(), train, ticksToStation, schedule);
-                ticksToStation += train.getToStation().getVal() + 1;
+                ticksToStation += train.getToStation().getVal() + 1 + 1;
                 break;
             case ARRIVAL:
                 putStationScheduleForTrain(train.getToStation(), train, ticksToStation, schedule);
                 ticksToStation += train.getToStation().getVal() + 1 + 1;
                 break;
             case DEPARTURE:
-                ticksToStation = path.getLength() + 1 ;
+                ticksToStation = path.getLength() + 1 + 1;
                 putStationScheduleForTrain(train.getToStation(), train, ticksToStation, schedule);
                 ticksToStation += train.getToStation().getVal() + 1 + 1;
                 break;
