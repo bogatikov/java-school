@@ -35,6 +35,9 @@ public class Train {
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Path> track;
 
+    @OneToMany(mappedBy = "train")
+    private List<Carriage> carriages;
+
     private Long moveCounter;
 
     public void move() {

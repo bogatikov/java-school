@@ -18,4 +18,9 @@ public class Ticket {
     @ManyToOne
     private Passenger passenger;
 
+    @ManyToOne
+    private Station fromStation;
+
+    @ManyToOne
+    private Station toStation;
 }

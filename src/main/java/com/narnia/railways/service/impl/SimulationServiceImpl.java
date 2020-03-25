@@ -1,5 +1,6 @@
-package com.narnia.railways.service;
+package com.narnia.railways.service.impl;
 
+import com.narnia.railways.service.Updatable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
