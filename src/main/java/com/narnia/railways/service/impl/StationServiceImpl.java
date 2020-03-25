@@ -1,7 +1,9 @@
-package com.narnia.railways.service;
+package com.narnia.railways.service.impl;
 
 import com.narnia.railways.dao.StationDAO;
 import com.narnia.railways.model.*;
+import com.narnia.railways.service.StationService;
+import com.narnia.railways.service.TrainService;
 import com.narnia.railways.service.dto.TrainScheduleDTO;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +19,12 @@ public class StationServiceImpl implements StationService {
 
     private final TrainService trainService;
 
-    private final TimeSimulationService timeSimulationService;
+    private final TimeSimulationServiceImpl timeSimulationServiceImpl;
 
-    public StationServiceImpl(StationDAO stationDAO, TrainService trainService, TimeSimulationService timeSimulationService) {
+    public StationServiceImpl(StationDAO stationDAO, TrainService trainService, TimeSimulationServiceImpl timeSimulationServiceImpl) {
         this.stationDAO = stationDAO;
         this.trainService = trainService;
-        this.timeSimulationService = timeSimulationService;
+        this.timeSimulationServiceImpl = timeSimulationServiceImpl;
     }
 
     public List<Station> getAll() {
@@ -76,7 +78,6 @@ public class StationServiceImpl implements StationService {
          * 2. The train has no possible to departure `cause no freeway or the ${train.toStation} capacity is zero now.
          *    For this case the train will be on the next station for ${path.length} ticks
          *
-         * + 1 - ticks takes by ARRIVAL AND DEPARTURE.
          */
         long ticksToStation = 0;
         switch (train.getTrainState()) {
@@ -133,7 +134,7 @@ public class StationServiceImpl implements StationService {
         schedule.get(station).add(new TrainScheduleDTO(
                 train,
                 ticks,
-                timeSimulationService.convertTicksToTime(ticks)
+                timeSimulationServiceImpl.convertTicksToTime(ticks)
         ));
     }
 }

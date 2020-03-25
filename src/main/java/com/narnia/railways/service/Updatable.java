@@ -1,5 +1,6 @@
 package com.narnia.railways.service;
 
+import com.narnia.railways.service.impl.SimulationServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public interface Updatable {

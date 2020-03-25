@@ -1,13 +1,12 @@
-package com.narnia.railways.service;
+package com.narnia.railways.service.impl;
 
 import com.narnia.railways.dao.TrainDAO;
-import com.narnia.railways.model.Path;
-import com.narnia.railways.model.Train;
-import com.narnia.railways.model.TrainDirect;
+import com.narnia.railways.model.*;
+import com.narnia.railways.service.TrainService;
+import com.narnia.railways.service.Updatable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.List;
 
 import static com.narnia.railways.model.TrainState.*;
@@ -55,6 +54,7 @@ public class TrainServiceImpl implements TrainService, Updatable {
         trainDAO.update(train);
     }
 
+    @Override
     public Train updateTrainState(Train train) {
         switch (train.getTrainState()) {
             case WAIT:
@@ -111,6 +111,61 @@ public class TrainServiceImpl implements TrainService, Updatable {
                 break;
         }
         return train;
+    }
+
+    @Override
+    public boolean hasFreePlace(Train train) {
+        Long freePlaces = train.getCarriages().stream().map(Carriage::getCapacity).reduce(0L, Long::sum);
+        return freePlaces > 0;
+    }
+
+    @Override
+    public void reservePlace(Train train) {
+
+    }
+
+    @Override
+    public Carriage getCarriageWithFreePlace(Train train) {
+        for (Carriage carriage :
+                train.getCarriages()) {
+            if (carriage.getCapacity() > 0) {
+                return carriage;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isAvailablePath(Train train, Station fromStation, Station toStation) {
+        boolean isFromStationAvailable = false;
+        boolean isToStationAvailable = false;
+        int idx = train.getTrack().indexOf(train.getNextPath());
+        switch (train.getDirection()) {
+            case BACKWARD:
+                for (int i = idx; i >= 0; i--) {
+                    Path currentPath = train.getTrack().get(i);
+                    if (currentPath.getF_node().equals(fromStation) || currentPath.getS_node().equals(toStation)) {
+                        isFromStationAvailable = true;
+                    }
+                    if (currentPath.getF_node().equals(toStation) || currentPath.getS_node().equals(toStation)) {
+                        isToStationAvailable = true;
+                    }
+                }
+                break;
+
+            case FORWARD:
+                for (int i = 0; i < train.getTrack().size(); i++) {
+                    Path currentPath = train.getTrack().get(i);
+                    if (currentPath.getF_node().equals(toStation) || currentPath.getS_node().equals(toStation)) {
+                        isToStationAvailable = true;
+                    }
+                    if (currentPath.getF_node().equals(fromStation) || currentPath.getS_node().equals(toStation)) {
+                        isFromStationAvailable = true;
+                    }
+                }
+                break;
+        }
+        return isFromStationAvailable && isToStationAvailable;
     }
 
     private Path calculateNextPathForTrain(Train train) {

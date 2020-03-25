@@ -1,5 +1,7 @@
 package com.narnia.railways.service;
 
+import com.narnia.railways.model.Carriage;
+import com.narnia.railways.model.Station;
 import com.narnia.railways.model.Train;
 
 import java.util.List;
@@ -17,4 +19,14 @@ public interface TrainService {
     void delete(Train train);
 
     void update(Train train);
+
+    Train updateTrainState(Train train);
+
+    boolean hasFreePlace(Train train);
+
+    void reservePlace(Train train);
+
+    Carriage getCarriageWithFreePlace(Train train);
+
+    boolean isAvailablePath(Train train, Station fromStation, Station toStation);
 }

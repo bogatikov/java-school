@@ -1,4 +1,4 @@
-package com.narnia.railways.service;
+package com.narnia.railways.service.impl;
 
 import com.narnia.railways.dao.PathDAO;
 import com.narnia.railways.model.Path;
