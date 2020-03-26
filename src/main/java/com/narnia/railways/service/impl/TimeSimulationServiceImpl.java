@@ -1,19 +1,18 @@
 package com.narnia.railways.service.impl;
 
+import com.narnia.railways.service.TimeSimulationService;
 import com.narnia.railways.service.Updatable;
-import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 @Service
-public class TimeSimulationServiceImpl implements Updatable {
+public class TimeSimulationServiceImpl implements Updatable, TimeSimulationService {
 
-    @Getter
+
     private Instant currentSimulationTime;
 
-    @Getter
     private Long amountOfTimeUnitPerTick = 5L;
 
     public TimeSimulationServiceImpl() {
@@ -29,6 +28,15 @@ public class TimeSimulationServiceImpl implements Updatable {
         return result;
     }
 
+    @Override
+    public Instant getCurrentSimulationTime() {
+        return currentSimulationTime;
+    }
+
+    @Override
+    public Long getAmountOfTimeUnitPerTick() {
+        return amountOfTimeUnitPerTick;
+    }
     @Override
     public void tick() {
         this.currentSimulationTime = this.currentSimulationTime.plus(amountOfTimeUnitPerTick, ChronoUnit.MINUTES);
