@@ -2,21 +2,24 @@ package com.narnia.railways.service.impl;
 
 import com.narnia.railways.dao.PathDAO;
 import com.narnia.railways.model.Path;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.narnia.railways.model.Station;
+import com.narnia.railways.service.StationService;
+import org.javatuples.Pair;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PathServiceImpl {
 
     private final PathDAO pathDAO;
 
-    private StationServiceImpl stationService;
+    private final StationService stationService;
 
-    public PathServiceImpl(PathDAO pathDAO) {
+    public PathServiceImpl(PathDAO pathDAO, StationService stationService) {
         this.pathDAO = pathDAO;
+        this.stationService = stationService;
     }
 
     public List<Path> getAll() {
@@ -50,73 +53,78 @@ public class PathServiceImpl {
     }
 
     public void printWay() {
-        Graph graph = new Graph(6);
-        getAll().stream()
-                .forEach(path -> {
-                    graph.addEdge(path.getF_node().getId().intValue() - 1, path.getS_node().getId().intValue() - 1);
-                    graph.addEdge(path.getS_node().getId().intValue() - 1, path.getF_node().getId().intValue() - 1);
-                });
+        /**
+         * Before modernization
+         * From C to F
+         * [2, 1, 0, 5]
+         * From F to E
+         * [5, 0, 1, 2, 3, 4]
+         * From A to D
+         * [0, 1, 2, 3]
+         */
+        List<Station> stations = stationService.getActiveStations();
+        Graph graph = new Graph(stations);
 
         System.out.println("From C to F");
-        graph.printAllPaths(2, 5);
+        graph.printAllPaths(stations.get(2), stations.get(5));
 
         System.out.println("From F to E");
-        graph.printAllPaths(5, 4);
+        graph.printAllPaths(stations.get(5), stations.get(4));
 
         System.out.println("From A to D");
-        graph.printAllPaths(0, 3);
-    }
-
-    @Autowired
-    public void setStationService(StationServiceImpl stationService) {
-        this.stationService = stationService;
+        graph.printAllPaths(stations.get(0), stations.get(3));
     }
 
     class Graph {
-        private int v;
 
-        private ArrayList<Integer>[] adjList;
+        private Map<Station, Pair<Set<Station>, Boolean>> adjList = new HashMap<>();
 
-        public Graph(int vertices) {
-            this.v = vertices;
-
+        public Graph(List<Station> stations) {
+            stations.forEach(station -> adjList.putIfAbsent(station, Pair.with(new HashSet<>(), false)));
             initAdjList();
         }
 
         private void initAdjList() {
-            adjList = new ArrayList[v];
-            for (int i = 0; i < v; i++) {
-                adjList[i] = new ArrayList<>();
-            }
+            PathServiceImpl.this.getAll()
+                    .forEach(this::addEdge);
         }
 
-        public void addEdge(int u, int v) {
-            adjList[u].add(v);
+        private void addEdge(Path path) {
+            adjList.get(path.getF_node()).getValue0().add(path.getS_node());
+            adjList.get(path.getS_node()).getValue0().add(path.getF_node());
         }
 
-        public void printAllPaths(int s, int d) {
-            boolean[] isVisited = new boolean[v];
-            ArrayList<Integer> pathList = new ArrayList<>();
-            pathList.add(s);
-            printAllPathsUtil(s, d, isVisited, pathList);
+        public void printAllPaths(Station from, Station to) {
+            adjList.entrySet()
+                    .forEach(stationPairEntry ->
+                            stationPairEntry.setValue(
+                                    stationPairEntry
+                                            .getValue()
+                                            .setAt1(false)
+                            )
+                    );
+            ArrayList<Station> pathList = new ArrayList<>();
+            pathList.add(from);
+            printAllPathsUtil(from, to, pathList);
         }
 
-        private void printAllPathsUtil(Integer u, Integer d, boolean[] isVisited, List<Integer> localPathList) {
-            isVisited[u] = true;
-            if (u.equals(d)) {
-                System.out.println(localPathList);
-                isVisited[u] = false;
+        private void printAllPathsUtil(Station from, Station to, List<Station> localPathList) {
+            Pair<Set<Station>, Boolean> adj = adjList.get(from);
+            adjList.put(from, adjList.get(from).setAt1(true));
+            if (from.equals(to)) {
+                System.out.println(localPathList.stream().map(Station::getName).collect(Collectors.joining(", ")));
+                adjList.put(from, adjList.get(from).setAt1(false));
                 return;
             }
 
-            for (Integer i : adjList[u]) {
-                if (!isVisited[i]) {
-                    localPathList.add(i);
-                    printAllPathsUtil(i, d, isVisited, localPathList);
-                    localPathList.remove(i);
+            for (Station s : adjList.get(from).getValue0()) {
+                if (!adjList.get(s).getValue1()) {
+                    localPathList.add(s);
+                    printAllPathsUtil(s, to, localPathList);
+                    localPathList.remove(s);
                 }
             }
-            isVisited[u] = true;
+            adjList.put(from, adjList.get(from).setAt1(true));
         }
     }
 }
