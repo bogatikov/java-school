@@ -9,7 +9,7 @@ import java.util.List;
 
 @Entity
 @Data
-@ToString(of = {"id"})
+@ToString(of = {"id", "name"})
 @EqualsAndHashCode(of = {"id"})
 public class Station {
 
