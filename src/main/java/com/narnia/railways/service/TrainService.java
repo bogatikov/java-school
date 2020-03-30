@@ -3,6 +3,7 @@ package com.narnia.railways.service;
 import com.narnia.railways.model.Carriage;
 import com.narnia.railways.model.Station;
 import com.narnia.railways.model.Train;
+import com.narnia.railways.service.dto.PathDTO;
 
 import java.util.List;
 
@@ -29,4 +30,6 @@ public interface TrainService {
     Carriage getCarriageWithFreePlace(Train train);
 
     boolean isAvailablePath(Train train, Station fromStation, Station toStation);
+
+    List<List<PathDTO>> getTrainsPath(Station from, Station to);
 }

@@ -4,7 +4,6 @@ import com.narnia.railways.dao.PathDAO;
 import com.narnia.railways.model.Path;
 import com.narnia.railways.model.Station;
 import com.narnia.railways.service.StationService;
-import com.narnia.railways.service.dto.TrackDTO;
 import org.javatuples.Pair;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +26,10 @@ public class PathServiceImpl {
         return pathDAO.list();
     }
 
+    public List<Path> getActivePaths() {
+        return pathDAO.getActivePath();
+    }
+
     public void save(Path path) {
         pathDAO.save(path);
     }
@@ -43,6 +46,10 @@ public class PathServiceImpl {
         pathDAO.update(path);
     }
 
+    public Optional<Path> getPathBetweenStation(Station from, Station to) {
+        return Optional.of(pathDAO.getPathByStations(from, to));
+    }
+
     public void reserveFreeway(Path path) {
         path.reserveFreeway();
         pathDAO.update(path);
@@ -53,41 +60,24 @@ public class PathServiceImpl {
         pathDAO.update(path);
     }
 
-    public void printWay() {
-        /**
-         * Before modernization
-         * From C to F
-         * [2, 1, 0, 5]
-         * From F to E
-         * [5, 0, 1, 2, 3, 4]
-         * From A to D
-         * [0, 1, 2, 3]
-         */
-        List<Station> stations = stationService.getActiveStations();
-        Graph graph = new Graph(stations);
+    public List<List<Station>> findWayBetweenStations(Station from, Station to) {
+//        List<Station> stations = stationService.getActiveStations();
+        Graph graph = new Graph();
 
-        System.out.println("From C to F");
-        List<TrackDTO> trackDTOS = graph.printAllPaths(stations.get(2), stations.get(5));
-
-        System.out.println("From F to E");
-        List<TrackDTO> trackDTOS1 = graph.printAllPaths(stations.get(5), stations.get(4));
-
-        System.out.println("From A to D");
-        List<TrackDTO> trackDTOS2 = graph.printAllPaths(stations.get(0), stations.get(3));
+        return graph.printAllPaths(from, to);
     }
 
-    class Graph {
+    private class Graph {
 
         private Map<Station, Pair<Set<Station>, Boolean>> adjList = new HashMap<>();
 
-        public Graph(List<Station> stations) {
-            stations.forEach(station -> adjList.putIfAbsent(station, Pair.with(new HashSet<>(), false)));
-            initAdjList();
-        }
-
-        private void initAdjList() {
-            PathServiceImpl.this.getAll()
-                    .forEach(this::addEdge);
+        public Graph() {
+            PathServiceImpl.this.getActivePaths()
+                    .forEach(path -> {
+                        adjList.putIfAbsent(path.getF_node(), Pair.with(new HashSet<>(), false));
+                        adjList.putIfAbsent(path.getS_node(), Pair.with(new HashSet<>(), false));
+                        addEdge(path);
+                    });
         }
 
         private void addEdge(Path path) {
@@ -95,7 +85,7 @@ public class PathServiceImpl {
             adjList.get(path.getS_node()).getValue0().add(path.getF_node());
         }
 
-        public List<TrackDTO> printAllPaths(Station from, Station to) {
+        public List<List<Station>> printAllPaths(Station from, Station to) {
             adjList.entrySet()
                     .forEach(stationPairEntry ->
                             stationPairEntry.setValue(
@@ -105,7 +95,7 @@ public class PathServiceImpl {
                             )
                     );
 
-            List<TrackDTO> tracks = new ArrayList<>();
+            List<List<Station>> tracks = new ArrayList<>();
 
             ArrayList<Station> pathList = new ArrayList<>();
             pathList.add(from);
@@ -114,12 +104,12 @@ public class PathServiceImpl {
             return tracks;
         }
 
-        private void printAllPathsUtil(Station from, Station to, List<Station> localPathList, List<TrackDTO> tracks) {
+        private void printAllPathsUtil(Station from, Station to, List<Station> localPathList, List<List<Station>> tracks) {
 
             adjList.put(from, adjList.get(from).setAt1(true));
             if (from.equals(to)) {
                 System.out.println(localPathList.stream().map(Station::getName).collect(Collectors.joining(", ")));
-                tracks.add(new TrackDTO(new ArrayList<>(localPathList)));
+                tracks.add(new ArrayList<>(localPathList));
                 adjList.put(from, adjList.get(from).setAt1(false));
                 return;
             }

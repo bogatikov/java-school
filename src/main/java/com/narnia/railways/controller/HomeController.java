@@ -1,18 +1,28 @@
 package com.narnia.railways.controller;
 
+import com.narnia.railways.model.Path;
 import com.narnia.railways.model.Station;
 import com.narnia.railways.service.ScheduleService;
 import com.narnia.railways.service.StationService;
 import com.narnia.railways.service.TimeSimulationService;
 import com.narnia.railways.service.TrainService;
+import com.narnia.railways.service.dto.PathDTO;
+import com.narnia.railways.service.dto.StationDTO;
+import com.narnia.railways.service.dto.TrackDTO;
 import com.narnia.railways.service.impl.PathServiceImpl;
 import com.narnia.railways.service.impl.SimulationServiceImpl;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/")
@@ -29,6 +39,9 @@ class HomeController {
     private final PathServiceImpl pathService;
 
     private final ScheduleService scheduleService;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     HomeController(StationService stationService, TrainService trainService, SimulationServiceImpl simulationService, TimeSimulationService timeSimulationService, PathServiceImpl pathService, ScheduleService scheduleService) {
         this.stationService = stationService;
@@ -90,11 +103,22 @@ class HomeController {
         return "redirect:/";
     }
 
-    @GetMapping("/test")
-    public void dotest() {
-        List<Station> activeStations = stationService.getActiveStations();
+    @GetMapping(value = "/test", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<List<List<PathDTO>>> dotest(@RequestParam(name = "from") Long from, @RequestParam(name = "to") Long to) {
 
-        pathService.printWay();
+        if (Objects.isNull(from) || Objects.isNull(to)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<List<PathDTO>> trainsPath = trainService.getTrainsPath(stationService.getById(from), stationService.getById(to));
+//        List<TrackDTO> wayBetweenStations = pathService.findWayBetweenStations(stationService.getById(from), stationService.getById(to));
+//        return ResponseEntity.ok(wayBetweenStations.stream().map(trackDTO -> {
+//                    return trackDTO.getStations().stream().map(StationDTO::map).collect(Collectors.toList());
+//                }
+//        ).collect(Collectors.toList()).get(0));
+        return ResponseEntity.ok()
+                .body(trainsPath);
     }
 
 }

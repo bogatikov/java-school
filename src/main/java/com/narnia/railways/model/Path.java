@@ -1,10 +1,12 @@
 package com.narnia.railways.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -26,6 +28,13 @@ public class Path {
 
     @Column(name = "weight")
     private Long length;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "train_path",
+            joinColumns = @JoinColumn(name = "track_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "Train_id", referencedColumnName = "id")
+    )
+    private List<Train> trains;
 
     public boolean hasFreeway() {
         return !reserved;

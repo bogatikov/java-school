@@ -4,10 +4,14 @@ import com.narnia.railways.dao.TrainDAO;
 import com.narnia.railways.model.*;
 import com.narnia.railways.service.TrainService;
 import com.narnia.railways.service.Updatable;
+import com.narnia.railways.service.dto.PathDTO;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.narnia.railways.model.TrainState.*;
 
@@ -17,6 +21,9 @@ public class TrainServiceImpl implements TrainService, Updatable {
     private final TrainDAO trainDAO;
 
     private final PathServiceImpl pathService;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     public TrainServiceImpl(TrainDAO trainDAO, PathServiceImpl pathService) {
         this.trainDAO = trainDAO;
@@ -205,5 +212,35 @@ public class TrainServiceImpl implements TrainService, Updatable {
         this.getActiveTrains().stream()
                 .map(this::updateTrainState)
                 .forEach(trainDAO::update);
+    }
+
+    public List<List<PathDTO>> getTrainsPath(Station from, Station to) {
+        List<List<Station>> wayBetweenStations = pathService.findWayBetweenStations(from, to);
+        List<List<Path>> paths = new ArrayList<>();
+
+        for (List<Station> stations :
+                wayBetweenStations) {
+            List<Path> pathList = new ArrayList<>();
+            for (int i = 0; i < stations.size() - 1; i++) {
+                Station a = stations.get(i);
+                Station b = stations.get(i + 1);
+                pathList.add(pathService.getPathBetweenStation(a, b).get());
+            }
+            paths.add(pathList);
+        }
+        return paths.stream()
+                .map(pths -> pths.stream()
+                                .map(path ->
+                                        modelMapper
+                                                .map(path, PathDTO.class)
+                                ).collect(
+                                        Collectors
+                                                .toList()
+                                )
+                )
+                .collect(
+                        Collectors
+                                .toList()
+                );
     }
 }

@@ -1,5 +1,6 @@
 package com.narnia.railways.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -30,9 +31,11 @@ public class Station {
     private Integer capacity;
 
     @OneToMany(mappedBy = "toStation")
+    @JsonIgnore
     private List<Train> arrivingTrains;
 
     @OneToMany(mappedBy = "fromStation")
+    @JsonIgnore
     private List<Train> departingTrains;
 
     public boolean hasFreePlatform() {
