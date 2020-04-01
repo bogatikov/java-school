@@ -1,0 +1,34 @@
+version: '3'
+services:
+
+  nrw-db:
+    image: 'postgres:12.1'
+    volumes:
+      - '~/volumes/nrw/postgresql/:/var/lib/postgresql/data/'
+    environment:
+      - POSTGRES_DB=nrw
+      - POSTGRES_USER=aslan
+      - POSTGRES_PASSWORD=narniaForever
+    ports:
+      - '5432:5432'
+  nrw-app:
+    image: 'narnia-railways:0.1'
+    ports:
+      - '8080:8080'
+    environment:
+      - DB_URL=jdbc:postgresql://nrw-db:5432/nrw
+      - DB_USERNAME=aslan
+      - DB_PASSWORD=narniaForever
+    depends_on:
+      - nrw-db
+#
+#  nrw-frontend:
+#    image: ''
+
+  nrw-db-admin:
+    image: 'adminer:latest'
+    restart: always
+    ports:
+     - '9000:8080'
+    depends_on:
+      - nrw-db

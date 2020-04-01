@@ -121,4 +121,10 @@ class HomeController {
                 .body(trainsPath);
     }
 
+
+    @GetMapping("/hello")
+    public String getHello() {
+        return "hello";
+    }
+
 }
