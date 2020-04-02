@@ -5,6 +5,7 @@ import com.narnia.railways.service.StationService;
 import com.narnia.railways.service.dto.StationDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/station")
+@CrossOrigin
 public class StationRestController {
 
     private final StationService stationService;

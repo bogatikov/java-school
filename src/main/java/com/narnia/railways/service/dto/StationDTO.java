@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StationDTO {
+
+    private Long id;
+
     private String name;
 
     private Double longitude;
@@ -20,6 +23,6 @@ public class StationDTO {
     private Integer capacity;
 
     public static StationDTO map(Station station) {
-        return new StationDTO(station.getName(), station.getLongitude(), station.getLatitude(), station.getVal(), station.getCapacity());
+        return new StationDTO(station.getId(), station.getName(), station.getLongitude(), station.getLatitude(), station.getVal(), station.getCapacity());
     }
 }

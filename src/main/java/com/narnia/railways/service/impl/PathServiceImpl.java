@@ -61,7 +61,6 @@ public class PathServiceImpl {
     }
 
     public List<List<Station>> findWayBetweenStations(Station from, Station to) {
-//        List<Station> stations = stationService.getActiveStations();
         Graph graph = new Graph();
 
         return graph.printAllPaths(from, to);
