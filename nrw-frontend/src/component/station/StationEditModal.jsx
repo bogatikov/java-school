@@ -1,7 +1,7 @@
 import {Button, Form, Modal} from "react-bootstrap";
 import * as React from "react";
-import {useInput} from "../utils/useInput";
 import {useState} from "react";
+import {useInput} from "../utils/useInput";
 import API from "../../utils/API";
 
 const StationEditModal = ({...props}) => {
@@ -15,10 +15,10 @@ const StationEditModal = ({...props}) => {
 
 
     const {value: stationName, bind: bindStationName} = useInput(station.name);
-    const {value: stationLongitude, bind: bindStationLongitude, reset: resetStationLongitude} = useInput(station.longitude);
-    const {value: stationLatitude, bind: bindStationLatitude, reset: resetStationLatitude} = useInput(station.latitude);
-    const {value: stationVal, bind: bindStationVal, reset: resetStationVal} = useInput(station.val);
-    const {value: stationCapacity, bind: bindStationCapacity, reset: resetStationCapacity} = useInput(station.capacity);
+    const {value: stationLongitude, bind: bindStationLongitude} = useInput(station.longitude);
+    const {value: stationLatitude, bind: bindStationLatitude} = useInput(station.latitude);
+    const {value: stationVal, bind: bindStationVal} = useInput(station.val);
+    const {value: stationCapacity, bind: bindStationCapacity} = useInput(station.capacity);
 
 
     const handleSubmit = (evt) => {

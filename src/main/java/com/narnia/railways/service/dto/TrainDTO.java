@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class TrainDTO {
+    private Long id;
     private String number;
     private StationDTO from;
     private StationDTO to;

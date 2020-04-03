@@ -17,6 +17,9 @@ public class Train {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "train_numer")
+    private String number;
+
     @Column(name = "train_state")
     private TrainState trainState = TrainState.STOP;
 

@@ -5,12 +5,14 @@ import com.narnia.railways.model.*;
 import com.narnia.railways.service.TrainService;
 import com.narnia.railways.service.Updatable;
 import com.narnia.railways.service.dto.PathDTO;
+import com.narnia.railways.service.dto.TrainDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.narnia.railways.model.TrainState.*;
@@ -230,17 +232,34 @@ public class TrainServiceImpl implements TrainService, Updatable {
         }
         return paths.stream()
                 .map(pths -> pths.stream()
-                                .map(path ->
-                                        modelMapper
-                                                .map(path, PathDTO.class)
-                                ).collect(
-                                        Collectors
-                                                .toList()
-                                )
+                        .map(path ->
+                                modelMapper
+                                        .map(path, PathDTO.class)
+                        ).collect(
+                                Collectors
+                                        .toList()
+                        )
                 )
                 .collect(
                         Collectors
                                 .toList()
                 );
+    }
+
+    @Override
+    public Train addTrain(TrainDTO trainDTO) {
+        Train train = new Train();
+        train.setNumber(trainDTO.getNumber());
+        train.setTrainState(STOP);
+        train.setDirection(TrainDirect.FORWARD);
+        trainDAO.save(train);
+        return train;
+    }
+
+    @Override
+    public Train updateTrain(Train train, TrainDTO trainDTO) {
+        train.setNumber(trainDTO.getNumber());
+        trainDAO.update(train);
+        return train;
     }
 }

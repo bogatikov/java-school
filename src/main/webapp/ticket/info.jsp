@@ -40,8 +40,8 @@
     <%--    <table>--%>
     <%--        <tr>--%>
     <%--            <td>Train</td>--%>
-    <%--            <td>From Station</td>--%>
-    <%--            <td>To Station</td>--%>
+    <%--            <td>From Train</td>--%>
+    <%--            <td>To Train</td>--%>
     <%--            <td>Status</td>--%>
     <%--            <td>Description</td>--%>
     <%--        </tr>--%>

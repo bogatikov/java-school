@@ -74,11 +74,9 @@ export default class StationList extends React.Component {
     };
 
     async dataLoad() {
-        const {createEntryModalOpen} = this.state;
         await API.get('/api/v1/station/')
             .then(response => {
-                this.setState({isLoading: false, stations: response.data, createEntryModalOpen: createEntryModalOpen});
-                console.log(response.data);
+                this.setState({isLoading: false, stations: response.data});
             })
             .catch(reason => {
                 console.log(reason);

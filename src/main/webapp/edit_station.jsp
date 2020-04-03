@@ -10,11 +10,11 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <title>Edit Station</title>
+    <title>Edit Train</title>
 </head>
 <body>
 <div align="center">
-    <h2>Edit Station</h2>
+    <h2>Edit Train</h2>
     <form:form action="save" method="post" modelAttribute="station">
         <table>
             <tr>
