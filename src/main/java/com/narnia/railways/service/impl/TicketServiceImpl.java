@@ -3,7 +3,9 @@ package com.narnia.railways.service.impl;
 import com.narnia.railways.dao.CarriageDAO;
 import com.narnia.railways.dao.TicketDAO;
 import com.narnia.railways.model.*;
+import com.narnia.railways.service.TicketService;
 import com.narnia.railways.service.TrainService;
+import com.narnia.railways.service.Updatable;
 import com.narnia.railways.service.dto.BuyTicketDTO;
 import com.narnia.railways.service.dto.PassengerDTO;
 import com.narnia.railways.service.dto.TicketDTO;
@@ -14,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class TicketServiceImpl {
+public class TicketServiceImpl implements TicketService, Updatable {
 
     private final TicketDAO ticketDAO;
 
@@ -34,26 +36,32 @@ public class TicketServiceImpl {
         this.passengerService = passengerService;
     }
 
+    @Override
     public List<Ticket> getAll() {
         return ticketDAO.list();
     }
 
+    @Override
     public void save(Ticket ticket) {
         ticketDAO.save(ticket);
     }
 
+    @Override
     public Ticket getById(Long id) {
         return ticketDAO.getById(id);
     }
 
+    @Override
     public void delete(Ticket ticket) {
         ticketDAO.delete(ticket);
     }
 
+    @Override
     public void update(Ticket ticket) {
         ticketDAO.update(ticket);
     }
 
+    @Override
     @Transactional
     public Ticket buyTicketOnTheTrain(TicketDTO ticketDTO, PassengerDTO passengerDTO) {
         final Station fromStation = ticketDTO.getFromStation();
@@ -61,10 +69,10 @@ public class TicketServiceImpl {
         final Train train = ticketDTO.getTrain();
 
         if (fromStation.equals(toStation)) {
-            return null;
+            return null; //FIXME: return null is bad practice
         }
         if (!trainService.isAvailablePath(train, fromStation, toStation)) {
-            return null;
+            return null;//FIXME: the same problem
         }
 
         Carriage carriage = carriageDAO.getCarriageWithFreePlace(train);
@@ -77,9 +85,9 @@ public class TicketServiceImpl {
         carriage.setCapacity(carriage.getCapacity() - 1);
 
         Passenger passenger = new Passenger();
-        passenger.setFirstName(passenger.getFirstName());
-        passenger.setLastName(passenger.getLastName());
-        passenger.setBirthday(passenger.getBirthday());
+        passenger.setFirstName(passengerDTO.getFirstName());
+        passenger.setLastName(passengerDTO.getLastName());
+        passenger.setBirthday(passengerDTO.getBirthday());
         passengerService.save(passenger);
 
         Ticket ticket = new Ticket();
@@ -91,6 +99,7 @@ public class TicketServiceImpl {
         return ticket;
     }
 
+    @Override
     @Transactional
     public Ticket buyTicketOnTheTrain(BuyTicketDTO buyTicketDTO) {
 
@@ -106,5 +115,27 @@ public class TicketServiceImpl {
                         buyTicketDTO.getBirthday()
                 )
         );
+    }
+
+    @Override
+    public void tick() {
+        getActiveTickets()
+                .forEach(ticket -> {
+                    Train train = ticket.getTrain();
+                    if (ticket.getToStation().equals(train.getFromStation()) && train.getTrainState().equals(TrainState.STOP)) {
+                        ticket.setActive(false);
+                        ticketDAO.update(ticket);
+                    }
+                });
+    }
+
+    @Override
+    public List<Ticket> getActiveTickets() {
+        return ticketDAO.getActiveTicketList();
+    }
+
+    @Override
+    public List<Ticket> getActiveTicketsForTrain(Train train) {
+        return ticketDAO.getActiveTicketList(train);
     }
 }

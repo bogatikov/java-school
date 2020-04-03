@@ -3,7 +3,7 @@ package com.narnia.railways.service.dto;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.Instant;
 
 @Data
 public class BuyTicketDTO {
@@ -16,5 +16,5 @@ public class BuyTicketDTO {
     private String lastName;
 
     @DateTimeFormat(style = "yyyy.MM.dd")
-    private Date birthday;
+    private Instant birthday;
 }

@@ -43,6 +43,11 @@ public class CarriageDAO {
         sessionFactory.getCurrentSession().update(carriage);
     }
 
+    public List<Carriage> getCarriagesByTrain(Train train) {
+        TypedQuery<Carriage> query = sessionFactory.getCurrentSession().createQuery("from Carriage c where c.train = :train");
+        query.setParameter("train", train);
+        return query.getResultList();
+    }
 
     public Carriage getCarriageWithFreePlace(Train train) {
         TypedQuery<Carriage> query = sessionFactory.getCurrentSession()

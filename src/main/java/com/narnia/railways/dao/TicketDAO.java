@@ -1,6 +1,7 @@
 package com.narnia.railways.dao;
 
 import com.narnia.railways.model.Ticket;
+import com.narnia.railways.model.Train;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,5 +39,17 @@ public class TicketDAO {
 
     public void update(Ticket ticket) {
         sessionFactory.getCurrentSession().update(ticket);
+    }
+
+    public List<Ticket> getActiveTicketList() {
+        TypedQuery<Ticket> query = sessionFactory.getCurrentSession().createQuery("from Ticket t where t.active = true");
+        return query.getResultList();
+    }
+
+    public List<Ticket> getActiveTicketList(Train train) {
+        TypedQuery<Ticket> query = sessionFactory.getCurrentSession()
+                .createQuery("from Ticket t where t.active = true and t.train = :train");
+        query.setParameter("train", train);
+        return query.getResultList();
     }
 }

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.Instant;
 
 @Data
 @AllArgsConstructor
@@ -13,5 +13,5 @@ public class PassengerDTO {
 
     private String firstName;
     private String lastName;
-    private Date birthday;
+    private Instant birthday;
 }

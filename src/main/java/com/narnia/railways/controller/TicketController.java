@@ -1,5 +1,6 @@
 package com.narnia.railways.controller;
 
+import com.narnia.railways.service.TicketService;
 import com.narnia.railways.service.TrainService;
 import com.narnia.railways.service.dto.SearchDTO;
 import com.narnia.railways.service.dto.TicketDTO;
@@ -15,11 +16,11 @@ public class TicketController {
 
     private final TrainService trainService;
 
-    private final TicketServiceImpl ticketService;
+    private final TicketService ticketService;
 
     private final StationServiceImpl stationService;
 
-    public TicketController(TrainService trainService, TicketServiceImpl ticketService, StationServiceImpl stationService) {
+    public TicketController(TrainService trainService, TicketService ticketService, StationServiceImpl stationService) {
         this.trainService = trainService;
         this.ticketService = ticketService;
         this.stationService = stationService;
