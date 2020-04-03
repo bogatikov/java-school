@@ -1,22 +1,17 @@
 import * as React from "react";
 import API from "../../utils/API";
 import Station from "./Station";
-import TableContainer from "@material-ui/core/TableContainer";
-import Paper from "@material-ui/core/Paper";
-import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
-import TableBody from "@material-ui/core/TableBody";
-import AddIcon from '@material-ui/icons/Add';
-import Button from "@material-ui/core/Button";
+import {Button, Table} from "react-bootstrap";
+import StationCreateModal from "./StationCreateModal";
 
 export default class StationList extends React.Component {
+
     constructor(props) {
         super(props);
         this.state = {
             isLoading: true,
-            stations: []
+            stations: [],
+            isCreateModalOpen: false
         };
     }
 
@@ -24,40 +19,66 @@ export default class StationList extends React.Component {
         this.dataLoad();
     }
 
+    onStationListChanged = (station) => {
+        this.dataLoad();
+    };
+
     render() {
-        const {isLoading, stations} = this.state;
+        const {isLoading, stations, isCreateModalOpen} = this.state;
         const rows = [];
         stations.forEach(station => {
-            rows.push(<Station station={station} key={station.id}/>);
+            rows.push(<Station
+                station={station}
+                key={station.id}
+                onStationListChanged={this.onStationListChanged}
+            />);
         });
         if (isLoading) {
             return <div>Loading....</div>;
         } else {
-            return <TableContainer component={Paper}>
-                <Table aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Station</TableCell>
-                            <TableCell align="right">Longitude</TableCell>
-                            <TableCell align="right">Latitude</TableCell>
-                            <TableCell align="right">Capacity</TableCell>
-                            <TableCell align="right"><Button>
-                                <AddIcon/>
-                            </Button></TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {rows}
-                    </TableBody>
-                </Table>
-            </TableContainer>;
+            return <Table responsive hover>
+                <thead>
+                <tr>
+                    <th>Station</th>
+                    <th>Longitude</th>
+                    <th>Latitude</th>
+                    <th>Capacity</th>
+                    <th>Value</th>
+                    <th>
+                        <Button
+                            onClick={this.openCreateEntryModal}
+                        >
+                            A
+                        </Button>
+                        <StationCreateModal
+                            isOpen={isCreateModalOpen}
+                            onClose={this.handleClose}
+                        />
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {rows}
+                </tbody>
+            </Table>
         }
     }
 
+
+    handleClose = (event) => {
+        this.setState({isCreateModalOpen: false})
+    };
+
+    openCreateEntryModal = () => {
+        this.setState({isCreateModalOpen: true});
+    };
+
     async dataLoad() {
-        const response = await API.get('/api/v1/station/')
+        const {createEntryModalOpen} = this.state;
+        await API.get('/api/v1/station/')
             .then(response => {
-                this.setState({isLoading: false, stations: response.data});
+                this.setState({isLoading: false, stations: response.data, createEntryModalOpen: createEntryModalOpen});
+                console.log(response.data);
             })
             .catch(reason => {
                 console.log(reason);

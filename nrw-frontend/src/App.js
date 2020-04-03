@@ -1,26 +1,13 @@
 import React from 'react';
 import './App.css';
-import 'typeface-roboto';
-import Container from "@material-ui/core/Container";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Container} from "react-bootstrap";
 import StationList from "./component/station/StationList";
 
 function App() {
     return (
-        <Container maxWidth="sm">
+        <Container>
             <StationList />
-            {/*<Button variant="contained">Default</Button>*/}
-            {/*<Button variant="contained" color="primary">*/}
-            {/*    Primary*/}
-            {/*</Button>*/}
-            {/*<Button variant="contained" color="secondary">*/}
-            {/*    Secondary*/}
-            {/*</Button>*/}
-            {/*<Button variant="contained" disabled>*/}
-            {/*    Disabled*/}
-            {/*</Button>*/}
-            {/*<Button variant="contained" color="primary" href="#contained-buttons">*/}
-            {/*    Link*/}
-            {/*</Button>*/}
         </Container>
     );
 }
