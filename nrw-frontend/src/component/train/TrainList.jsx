@@ -30,7 +30,6 @@ const TrainList = () => {
             .then(response => {
                 setIsLoading(false);
                 setTrains(response.data);
-                console.log(response.data);
             })
             .catch(reason => {
                 console.log(reason);
