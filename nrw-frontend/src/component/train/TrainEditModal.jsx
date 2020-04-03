@@ -26,7 +26,6 @@ const TrainEditModal = ({...props}) => {
                 .then(response => {
                     handleClose();
                     onTrainUpdated(response.data);
-                    console.log(response.data);
                     setValidationsErrors({});
                 }).catch((error) => {
                 // Error 😨

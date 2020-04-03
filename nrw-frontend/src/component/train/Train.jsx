@@ -54,7 +54,7 @@ const Train = ({...props}) => {
             <td>{train.direction}</td>
             <td>
                 <Button
-                    onClick={(evt) => setEditModalOpen(true)}
+                    onClick={() => setEditModalOpen(true)}
                 >
                     E
                 </Button>

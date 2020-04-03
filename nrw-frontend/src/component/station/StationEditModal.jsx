@@ -33,8 +33,8 @@ const StationEditModal = ({...props}) => {
             })
                 .then(response => {
                     handleClose();
-                    setValidationsErrors({});
                     onStationUpdated(response.data);
+                    setValidationsErrors({});
                 }).catch((error) => {
                 // Error 😨
                 if (error.response) {
