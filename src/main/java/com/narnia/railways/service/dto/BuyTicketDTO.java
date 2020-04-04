@@ -1,10 +1,11 @@
 package com.narnia.railways.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
-import java.time.Instant;
+import java.util.Date;
 
 @Data
 public class BuyTicketDTO {
@@ -25,6 +26,6 @@ public class BuyTicketDTO {
     private String lastName;
 
     @NotNull
-    @DateTimeFormat(style = "yyyy.MM.dd")
-    private Instant birthday;
+    @JsonFormat(pattern = "yyyy.MM.dd")
+    private Date birthday;
 }

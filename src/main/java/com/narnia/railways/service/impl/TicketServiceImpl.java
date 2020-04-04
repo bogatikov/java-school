@@ -10,6 +10,9 @@ import com.narnia.railways.service.Updatable;
 import com.narnia.railways.service.dto.BuyTicketDTO;
 import com.narnia.railways.service.dto.PassengerDTO;
 import com.narnia.railways.service.dto.TicketDTO;
+import com.narnia.railways.service.dto.TicketReceiptDTO;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +31,9 @@ public class TicketServiceImpl implements TicketService, Updatable {
     private final StationServiceImpl stationService;
 
     private final PassengerServiceImpl passengerService;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     public TicketServiceImpl(TicketDAO ticketDAO, CarriageDAO carriageDAO, TrainService trainService, StationServiceImpl stationService, PassengerServiceImpl passengerService) {
         this.ticketDAO = ticketDAO;
@@ -95,15 +101,16 @@ public class TicketServiceImpl implements TicketService, Updatable {
         ticket.setToStation(toStation);
         ticket.setTrain(train);
         ticket.setPassenger(passenger);
+        ticket.setCarriage(carriage);
         ticketDAO.save(ticket);
         return ticket;
     }
 
     @Override
     @Transactional
-    public Ticket buyTicketOnTheTrain(BuyTicketDTO buyTicketDTO) {
+    public TicketReceiptDTO buyTicketOnTheTrain(BuyTicketDTO buyTicketDTO) {
 
-        return buyTicketOnTheTrain(
+        Ticket ticket = buyTicketOnTheTrain(
                 new TicketDTO(
                         trainService.getById(buyTicketDTO.getTrainID()),
                         stationService.getById(buyTicketDTO.getFromStationID()),
@@ -115,6 +122,7 @@ public class TicketServiceImpl implements TicketService, Updatable {
                         buyTicketDTO.getBirthday()
                 )
         );
+        return modelMapper.map(ticket, TicketReceiptDTO.class);
     }
 
     @Override
@@ -123,7 +131,7 @@ public class TicketServiceImpl implements TicketService, Updatable {
                 .forEach(ticket -> {
                     Train train = ticket.getTrain();
                     if (ticket.getToStation().equals(train.getFromStation()) && train.getTrainState().equals(TrainState.STOP)) {
-                        ticket.setActive(false);
+                        ticket.setIsActive(false);
                         ticketDAO.update(ticket);
                     }
                 });

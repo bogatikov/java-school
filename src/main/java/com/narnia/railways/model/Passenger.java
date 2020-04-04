@@ -6,7 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.time.Instant;
+import java.util.Date;
 
 @Entity
 @Data
@@ -20,5 +20,5 @@ public class Passenger {
 
     private String lastName;
 
-    private Instant birthday;
+    private Date birthday;
 }

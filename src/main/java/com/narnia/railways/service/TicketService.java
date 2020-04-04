@@ -5,6 +5,7 @@ import com.narnia.railways.model.Train;
 import com.narnia.railways.service.dto.BuyTicketDTO;
 import com.narnia.railways.service.dto.PassengerDTO;
 import com.narnia.railways.service.dto.TicketDTO;
+import com.narnia.railways.service.dto.TicketReceiptDTO;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public interface TicketService {
     Ticket buyTicketOnTheTrain(TicketDTO ticketDTO, PassengerDTO passengerDTO);
 
     @Transactional
-    Ticket buyTicketOnTheTrain(BuyTicketDTO buyTicketDTO);
+    TicketReceiptDTO buyTicketOnTheTrain(BuyTicketDTO buyTicketDTO);
 
     void tick();
 

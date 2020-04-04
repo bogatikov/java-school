@@ -3,6 +3,8 @@ package com.narnia.railways.error;
 import com.narnia.railways.controller.exception.BadRequestException;
 import com.narnia.railways.controller.exception.NotFoundException;
 import com.narnia.railways.error.validation.ApiValidationError;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,7 @@ import javax.validation.ConstraintViolationException;
 import java.util.*;
 
 @ControllerAdvice
+@Slf4j
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
     // error handle for @Valid
     @Override
@@ -157,6 +160,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     public ResponseEntity<ApiError> handleAll(Exception ex, WebRequest request) {
         ApiError apiError = new ApiError(
                 HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "error occurred");
+        log.error("error caught: " + ex.getMessage(), ex);
         return new ResponseEntity<>(
                 apiError, new HttpHeaders(), apiError.getStatus());
     }

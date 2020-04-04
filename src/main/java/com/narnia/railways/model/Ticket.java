@@ -22,7 +22,7 @@ public class Ticket {
     private Carriage carriage;
 
     @Column(name = "is_active")
-    private Boolean active = true;
+    private Boolean isActive = true;
 
     @ManyToOne
     private Station fromStation;
