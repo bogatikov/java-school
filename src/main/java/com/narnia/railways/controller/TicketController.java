@@ -1,5 +1,7 @@
 package com.narnia.railways.controller;
 
+import com.narnia.railways.controller.exception.BadRequestException;
+import com.narnia.railways.controller.exception.NotFoundException;
 import com.narnia.railways.service.TicketService;
 import com.narnia.railways.service.TrainService;
 import com.narnia.railways.service.dto.SearchDTO;

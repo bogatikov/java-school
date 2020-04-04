@@ -1,5 +1,8 @@
 package com.narnia.railways.controller.exception;
 
+import lombok.Data;
+
+@Data
 public class BadRequestException extends RuntimeException {
     private final String entityName;
 
