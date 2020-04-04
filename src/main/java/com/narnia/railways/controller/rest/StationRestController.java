@@ -1,4 +1,4 @@
-package com.narnia.railways.controller;
+package com.narnia.railways.controller.rest;
 
 import com.narnia.railways.model.Station;
 import com.narnia.railways.service.StationService;

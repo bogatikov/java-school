@@ -1,6 +1,7 @@
 package com.narnia.railways.service;
 
 import com.narnia.railways.model.Carriage;
+import com.narnia.railways.model.Path;
 import com.narnia.railways.model.Station;
 import com.narnia.railways.model.Train;
 import com.narnia.railways.service.dto.PathDTO;
@@ -37,4 +38,6 @@ public interface TrainService {
     Train addTrain(TrainDTO trainDTO);
 
     Train updateTrain(Train train, TrainDTO trainDTO);
+
+    List<Path> getAvailablePathsForTrain(Long trainId);
 }

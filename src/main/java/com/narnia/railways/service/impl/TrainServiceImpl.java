@@ -2,6 +2,7 @@ package com.narnia.railways.service.impl;
 
 import com.narnia.railways.dao.TrainDAO;
 import com.narnia.railways.model.*;
+import com.narnia.railways.service.PathService;
 import com.narnia.railways.service.TrainService;
 import com.narnia.railways.service.Updatable;
 import com.narnia.railways.service.dto.PathDTO;
@@ -22,12 +23,12 @@ public class TrainServiceImpl implements TrainService, Updatable {
 
     private final TrainDAO trainDAO;
 
-    private final PathServiceImpl pathService;
+    private final PathService pathService;
 
     @Autowired
     private ModelMapper modelMapper;
 
-    public TrainServiceImpl(TrainDAO trainDAO, PathServiceImpl pathService) {
+    public TrainServiceImpl(TrainDAO trainDAO, PathService pathService) {
         this.trainDAO = trainDAO;
         this.pathService = pathService;
     }
@@ -261,5 +262,11 @@ public class TrainServiceImpl implements TrainService, Updatable {
         train.setNumber(trainDTO.getNumber());
         trainDAO.update(train);
         return train;
+    }
+
+    @Override
+    public List<Path> getAvailablePathsForTrain(Long trainId) {
+        Train train = getById(trainId);
+        return pathService.getAvailablePathsForTrain(train);
     }
 }

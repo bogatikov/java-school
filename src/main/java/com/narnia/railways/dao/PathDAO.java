@@ -54,4 +54,11 @@ public class PathDAO {
     public void update(Path path) {
         sessionFactory.getCurrentSession().update(path);
     }
+
+    public List<Path> getPathsByStation(Station station) {
+        TypedQuery<Path> query = sessionFactory.getCurrentSession()
+                .createQuery("from Path p where p.f_node = :station or p.s_node = :station");
+        query.setParameter(":station", station);
+        return query.getResultList();
+    }
 }

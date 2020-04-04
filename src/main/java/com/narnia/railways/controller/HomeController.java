@@ -1,15 +1,8 @@
 package com.narnia.railways.controller;
 
-import com.narnia.railways.model.Path;
 import com.narnia.railways.model.Station;
-import com.narnia.railways.service.ScheduleService;
-import com.narnia.railways.service.StationService;
-import com.narnia.railways.service.TimeSimulationService;
-import com.narnia.railways.service.TrainService;
+import com.narnia.railways.service.*;
 import com.narnia.railways.service.dto.PathDTO;
-import com.narnia.railways.service.dto.StationDTO;
-import com.narnia.railways.service.dto.TrackDTO;
-import com.narnia.railways.service.impl.PathServiceImpl;
 import com.narnia.railways.service.impl.SimulationServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +14,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/")
@@ -36,14 +27,14 @@ class HomeController {
 
     private final TimeSimulationService timeSimulationService;
 
-    private final PathServiceImpl pathService;
+    private final PathService pathService;
 
     private final ScheduleService scheduleService;
 
     @Autowired
     private ModelMapper modelMapper;
 
-    HomeController(StationService stationService, TrainService trainService, SimulationServiceImpl simulationService, TimeSimulationService timeSimulationService, PathServiceImpl pathService, ScheduleService scheduleService) {
+    HomeController(StationService stationService, TrainService trainService, SimulationServiceImpl simulationService, TimeSimulationService timeSimulationService, PathService pathService, ScheduleService scheduleService) {
         this.stationService = stationService;
         this.trainService = trainService;
         this.simulationService = simulationService;

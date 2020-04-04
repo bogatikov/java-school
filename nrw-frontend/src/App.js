@@ -5,13 +5,13 @@ import {Container} from "react-bootstrap";
 import StationList from "./component/station/StationList";
 import TrainList from "./component/train/TrainList";
 
-function App() {
+const App = () => {
     return (
         <Container>
             <StationList/>
             <TrainList/>
         </Container>
     );
-}
+};
 
 export default App;

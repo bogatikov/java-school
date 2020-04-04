@@ -1,4 +1,4 @@
-package com.narnia.railways.controller;
+package com.narnia.railways.controller.rest;
 
 import com.narnia.railways.service.CarriageService;
 import com.narnia.railways.service.dto.CarriageDTO;
