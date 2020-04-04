@@ -26,11 +26,3 @@ services:
     image: 'nrw-frontend:0.1'
     ports:
     - 80:80
-
-  nrw-db-admin:
-    image: 'adminer:latest'
-    restart: always
-    ports:
-     - '9000:8080'
-    depends_on:
-      - nrw-db

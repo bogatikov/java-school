@@ -1,6 +1,5 @@
 package com.narnia.railways.service.dto;
 
-import com.narnia.railways.model.Train;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,7 @@ import java.time.Instant;
 @NoArgsConstructor
 public class TrainScheduleDTO {
 
-    private Train train;
+    private TrainDTO train;
     private Long arriveThrough;
     private Instant arrivalTime;
 }

@@ -17,7 +17,6 @@ const PassengerListModal = ({...props}) => {
         await API.get('/api/v1/carriage/' + train.id)
             .then(response => {
                 setCarriages(response.data);
-                console.log(response.data);
             })
             .catch(reason => {
                 console.log(reason);

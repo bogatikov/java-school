@@ -7,7 +7,11 @@ import com.narnia.railways.service.ScheduleService;
 import com.narnia.railways.service.StationService;
 import com.narnia.railways.service.TimeSimulationService;
 import com.narnia.railways.service.TrainService;
+import com.narnia.railways.service.dto.StationDTO;
+import com.narnia.railways.service.dto.TrainDTO;
 import com.narnia.railways.service.dto.TrainScheduleDTO;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,13 +28,16 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private final TrainService trainService;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     public ScheduleServiceImpl(StationService stationService, TimeSimulationService timeSimulationServiceImpl, TrainService trainService) {
         this.stationService = stationService;
         this.timeSimulationServiceImpl = timeSimulationServiceImpl;
         this.trainService = trainService;
     }
 
-    public Map<Station, List<TrainScheduleDTO>> getScheduleForStations() {
+    public Map<Long, List<TrainScheduleDTO>> getScheduleForStations() {
         Map<Station, List<TrainScheduleDTO>> schedule = new HashMap<>();
         stationService.getActiveStations()
                 .forEach(station -> {
@@ -41,7 +48,16 @@ public class ScheduleServiceImpl implements ScheduleService {
                 .getActiveTrains()
                 .forEach(train -> calculateTrainSchedule(train, schedule));
 
-        return schedule;
+        return convertKeys(schedule);
+    }
+
+    private Map<Long, List<TrainScheduleDTO>> convertKeys(Map<Station, List<TrainScheduleDTO>> schedule) {
+        Map<Long, List<TrainScheduleDTO>> convertedSchedule = new HashMap<>();
+        schedule.keySet()
+                .forEach(key -> {
+                    convertedSchedule.put(key.getId(), schedule.get(key));
+                });
+        return convertedSchedule;
     }
 
     private void calculateTrainSchedule(Train train, Map<Station, List<TrainScheduleDTO>> schedule) {
@@ -115,7 +131,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     private void putStationScheduleForTrain(Station station, Train train, Long ticks, Map<Station, List<TrainScheduleDTO>> schedule) {
         schedule.get(station).add(new TrainScheduleDTO(
-                train,
+                modelMapper.map(train, TrainDTO.class),
                 ticks,
                 timeSimulationServiceImpl.convertTicksToTime(ticks)
         ));

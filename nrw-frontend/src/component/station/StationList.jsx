@@ -4,6 +4,7 @@ import Station from "./Station";
 import {Button, Table} from "react-bootstrap";
 import StationCreateModal from "./StationCreateModal";
 
+//FIXME the stations list doesn't update when station was added/VAL
 export default class StationList extends React.Component {
 
     constructor(props) {

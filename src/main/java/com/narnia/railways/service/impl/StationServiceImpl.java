@@ -49,7 +49,7 @@ public class StationServiceImpl implements StationService {
         station.setLongitude(stationDTO.getLongitude());
         station.setLatitude(stationDTO.getLatitude());
         station.setCapacity(stationDTO.getCapacity());
-        station.setVal(station.getVal());
+        station.setVal(stationDTO.getVal());
 
         this.save(station);
         return station;

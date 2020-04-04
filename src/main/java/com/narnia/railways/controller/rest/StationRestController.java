@@ -37,6 +37,12 @@ public class StationRestController {
         );
     }
 
+    @GetMapping("/{station}")
+    public ResponseEntity<StationDTO> getStation(@PathVariable(name = "station") Long stationId) {
+        Station station = stationService.getById(stationId);
+        return ResponseEntity.ok().body(modelMapper.map(station, StationDTO.class));
+    }
+
     @PostMapping
     public ResponseEntity<StationDTO> addStation(@RequestBody @Valid StationDTO stationDTO) {
         Station station = stationService.addStation(stationDTO);

@@ -1,6 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ page import="com.narnia.railways.model.Train" %>
+<%@ page import="com.narnia.railways.service.dto.TrainDTO" %>
 <%@ page import="com.narnia.railways.model.TrainState" %>
 <%--
   Created by IntelliJ IDEA.
@@ -83,7 +83,7 @@
 
     <c:forEach items="${schedules.keySet()}" var="station">
         <div style="float: left; margin: 5px 5px 5px 5px">
-            Table for station <b>${station.name}</b>
+            Table for station <b>${station}</b>
             <table>
                 <tr>
                     <td>Train</td>
@@ -97,7 +97,7 @@
                                 <c:when test="${(schedule.getArriveThrough() == 0 && schedule.getTrain().getTrainState().equals(TrainState.ARRIVAL))}">
                                     TRAIN ARRIVAL
                                 </c:when>
-                                <c:when test="${schedule.getTrain().getFromStation().equals(station) && schedule.getTrain().getTrainState().equals(TrainState.DEPARTURE)}">
+                                <c:when test="${schedule.getTrain().getFrom().getId().equals(station) && schedule.getTrain().getTrainState().equals(TrainState.DEPARTURE)}">
                                     TRAIN DEPARTURE
                                 </c:when>
                                 <c:otherwise>
