@@ -29,13 +29,11 @@ const PassengerListModal = ({...props}) => {
         const passengers = carriage.passengers;
         const passengersRows = [];
         passengers.forEach(passenger => {
-            const date = new Date(passenger.birthday.epochSecond * 1000);
-            const birthday = date.getFullYear() + '/' + date.getMonth() + '/' + date.getDay();
             passengersRows.push(
                 <tr key={passenger.id}>
                     <td>{passenger.firstName}</td>
                     <td>{passenger.lastName}</td>
-                    <td>{birthday}</td>
+                    <td>{passenger.birthday}</td>
                 </tr>
             );
         });
