@@ -1,5 +1,7 @@
 package com.narnia.railways.error;
 
+import com.narnia.railways.controller.exception.BadRequestException;
+import com.narnia.railways.controller.exception.NotFoundException;
 import com.narnia.railways.error.validation.ApiValidationError;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -130,7 +132,15 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 apiError, new HttpHeaders(), apiError.getStatus());
     }
 
-    @ExceptionHandler({ Exception.class })
+    @ExceptionHandler({NotFoundException.class})
+    public ResponseEntity<?> handleNotFoundException() {
+        ApiError apiError = new ApiError(
+                HttpStatus.NOT_FOUND, "entity not found", "error occurred");
+        return new ResponseEntity<Object>(
+                apiError, new HttpHeaders(), apiError.getStatus());
+    }
+
+    @ExceptionHandler({ BadRequestException.class, Exception.class })
     public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
         ApiError apiError = new ApiError(
                 HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), "error occurred");

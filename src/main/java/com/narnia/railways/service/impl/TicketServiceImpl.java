@@ -1,5 +1,6 @@
 package com.narnia.railways.service.impl;
 
+import com.narnia.railways.controller.exception.BadRequestException;
 import com.narnia.railways.dao.CarriageDAO;
 import com.narnia.railways.dao.TicketDAO;
 import com.narnia.railways.model.*;
@@ -69,17 +70,16 @@ public class TicketServiceImpl implements TicketService, Updatable {
         final Train train = ticketDTO.getTrain();
 
         if (fromStation.equals(toStation)) {
-            return null; //FIXME: return null is bad practice
+            throw new BadRequestException("ticket", "stations from and couldn't be the same");
         }
         if (!trainService.isAvailablePath(train, fromStation, toStation)) {
-            return null;//FIXME: the same problem
+            throw new BadRequestException("ticket", "There is no paths between stations");
         }
 
         Carriage carriage = carriageDAO.getCarriageWithFreePlace(train);
 
         if (Objects.isNull(carriage)) {
-            //there is no free place on the train
-            return null;
+            throw new BadRequestException("ticket", "There is no vacations place on the train");
         }
 
         carriage.setCapacity(carriage.getCapacity() - 1);
