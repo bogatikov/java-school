@@ -5,6 +5,7 @@ import TrainCreateModal from "../train/TrainCreateModal";
 import Train from "./Train";
 import API from "../../utils/API";
 
+//TODO time unit
 const TrainList = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [trains, setTrains] = useState([]);

@@ -42,7 +42,7 @@ public class TicketDAO {
     }
 
     public List<Ticket> getActiveTicketList() {
-        TypedQuery<Ticket> query = sessionFactory.getCurrentSession().createQuery("from Ticket t where t.active = true");
+        TypedQuery<Ticket> query = sessionFactory.getCurrentSession().createQuery("from Ticket t where t.isActive = true");
         return query.getResultList();
     }
 
