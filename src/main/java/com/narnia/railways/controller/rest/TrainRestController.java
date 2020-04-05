@@ -2,8 +2,8 @@ package com.narnia.railways.controller.rest;
 
 import com.narnia.railways.model.Train;
 import com.narnia.railways.service.TrainService;
-import com.narnia.railways.service.dto.StationDTO;
 import com.narnia.railways.service.dto.TrainDTO;
+import com.narnia.railways.service.dto.TrainBuyTicketDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +36,19 @@ public class TrainRestController {
                 )
                 .collect(Collectors.toList())
         );
+    }
+
+    @GetMapping("/{train}")
+    public ResponseEntity<TrainDTO> getTrain(@PathVariable(name = "train") Long trainId) {
+        Train train = trainService.getById(trainId);
+        return ResponseEntity.ok().body(modelMapper.map(train, TrainDTO.class));
+    }
+
+    @GetMapping("/track/{train}")
+    public ResponseEntity<TrainBuyTicketDTO> getTrainTrack(@PathVariable(name = "train") Long trainId) {
+
+        Train train = trainService.getById(trainId);
+        return ResponseEntity.ok().body(modelMapper.map(train, TrainBuyTicketDTO.class));
     }
 
     @PostMapping

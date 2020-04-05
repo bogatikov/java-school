@@ -14,8 +14,9 @@ import java.util.Date;
 @NoArgsConstructor
 public class PassengerDTO {
 
+    private Long id;
     private String firstName;
     private String lastName;
-    @JsonFormat(pattern = "yyyy.MM.dd")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date birthday;
 }

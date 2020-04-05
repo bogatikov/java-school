@@ -1,9 +1,10 @@
 import * as React from "react";
 import {useState} from "react";
-import {Button} from "react-bootstrap";
+import {Button, ButtonGroup} from "react-bootstrap";
 import TrainEditModal from "./TrainEditModal";
 import API from "../../utils/API";
 import PassengerListModal from "../passenger/PassengerListModal";
+import BuyTicketModal from "../ticket/BuyTicketModal";
 
 
 const Train = ({...props}) => {
@@ -11,13 +12,21 @@ const Train = ({...props}) => {
     const [train, setTrain] = useState(props.train);
     const [isEditModalOpen, setEditModalOpen] = useState(false);
     const [isPassengerModalOpen, setPassengerModalOpen] = useState(false);
+    const [isTicketPurchaseModalOpen, setTicketPurchaseModalOpen] = useState(false);
 
-    const handleClose = () => {
+    const handleEditModalClose = () => {
         setEditModalOpen(false);
+    };
+    const handleTicketPurchaseClose = () => {
+        setTicketPurchaseModalOpen(false);
     };
 
     const handlePassengerModalClose = () => {
         setPassengerModalOpen(false);
+    };
+
+    const onTicketPurchaseModalOpen = () => {
+        setTicketPurchaseModalOpen(true);
     };
 
     const onTrainUpdate = (newTrain) => {
@@ -47,27 +56,41 @@ const Train = ({...props}) => {
                 <td>{train.trainState}</td>
                 <td>{train.direction}</td>
                 <td>
-                    <Button
-                        onClick={() => setEditModalOpen(true)}
-                    >
-                        E
-                    </Button>
+                    <ButtonGroup>
+                        <Button
+                            onClick={() => setEditModalOpen(true)}
+                        >
+                            E
+                        </Button>
+                        <Button
+                            variant={"danger"}
+                            onClick={deleteTrain}
+                        >
+                            D
+                        </Button>
+                        <Button
+                            variant={"secondary"}
+                            onClick={onPassengerListOpen}
+                        >
+                            P
+                        </Button>
+                        <Button
+                            variant={"warning"}
+                            onClick={onTicketPurchaseModalOpen}
+                        >
+                            T
+                        </Button>
+                    </ButtonGroup>
+                    {isTicketPurchaseModalOpen ? <BuyTicketModal
+                        trainId={train.id}
+                        onClose={handleTicketPurchaseClose}
+                    /> : null}
                     <TrainEditModal
                         isOpen={isEditModalOpen}
                         train={train}
-                        onClose={handleClose}
+                        onClose={handleEditModalClose}
                         onTrainUpdated={onTrainUpdate}
                     />
-                    <Button
-                        onClick={deleteTrain}
-                    >
-                        D
-                    </Button>
-                    <Button
-                        onClick={onPassengerListOpen}
-                    >
-                        P
-                    </Button>
                 </td>
             </tr>
             <PassengerListModal

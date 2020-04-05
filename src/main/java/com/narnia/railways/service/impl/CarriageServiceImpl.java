@@ -53,6 +53,7 @@ public class CarriageServiceImpl implements CarriageService {
             carriageDTO.setPassengers(
                     carriagePassengers.get(carriage).stream().map(passenger -> {
                         PassengerDTO passengerDTO = new PassengerDTO();
+                        passengerDTO.setId(passenger.getId());
                         passengerDTO.setFirstName(passenger.getFirstName());
                         passengerDTO.setLastName(passenger.getLastName());
                         passengerDTO.setBirthday(passenger.getBirthday());

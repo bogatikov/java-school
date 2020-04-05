@@ -117,7 +117,8 @@ public class TicketServiceImpl implements TicketService, Updatable {
                         stationService.getById(buyTicketDTO.getToStationID())
                 ),
                 new PassengerDTO(
-                        buyTicketDTO.getFirsName(),
+                        null,
+                        buyTicketDTO.getFirstName(),
                         buyTicketDTO.getLastName(),
                         buyTicketDTO.getBirthday()
                 )

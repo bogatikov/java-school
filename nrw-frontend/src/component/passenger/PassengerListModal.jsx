@@ -38,7 +38,7 @@ const PassengerListModal = ({...props}) => {
             );
         });
         rows.push(
-            <>
+            <div key={carriage.id}>
                 <h5>List of passengers from carriage number {carriage.id}</h5>
 
                 <Table responsive>
@@ -50,7 +50,7 @@ const PassengerListModal = ({...props}) => {
                     {passengersRows}
                 </Table>
                 <hr/>
-            </>
+            </div>
         );
     });
 
@@ -61,7 +61,6 @@ const PassengerListModal = ({...props}) => {
             </Modal.Header>
             <Modal.Body>
                 {rows}
-
             </Modal.Body>
         </Modal>
     );

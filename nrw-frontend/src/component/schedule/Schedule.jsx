@@ -23,7 +23,7 @@ const Schedule = ({...props}) => {
     schedule.forEach(sch => {
         const date = new Date(sch.arrivalTime.epochSecond * 1000);
         const arrival = date.getFullYear() + '/' + date.getMonth() + '/' + date.getDay() + ' ' + date.getHours() + ':' + date.getMinutes();
-        rows.push(<tr>
+        rows.push(<tr key={sch.train.id}>
             <td>{sch.train.number}</td>
             <td>{arrival}</td>
         </tr>);

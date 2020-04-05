@@ -20,12 +20,12 @@ public class BuyTicketDTO {
     private Long toStationID;
 
     @NotNull
-    private String firsName;
+    private String firstName;
 
     @NotNull
     private String lastName;
 
     @NotNull
-    @JsonFormat(pattern = "yyyy.MM.dd")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     private Date birthday;
 }

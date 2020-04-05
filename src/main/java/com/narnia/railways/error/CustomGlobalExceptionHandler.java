@@ -44,6 +44,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
         ApiValidationError apiValidationError =
                 new ApiValidationError(HttpStatus.BAD_REQUEST, "Validation error", "validation_error", errors);
+        log.error("error caught: " + ex.getMessage(), ex);
         return handleExceptionInternal(
                 ex, apiValidationError, headers, apiValidationError.getStatus(), request);
     }
@@ -57,6 +58,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
         ApiError apiError =
                 new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
+        log.error("error caught: " + ex.getMessage(), ex);
         return new ResponseEntity<Object>(
                 apiError, new HttpHeaders(), apiError.getStatus());
     }
@@ -72,6 +74,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
         ApiError apiError =
                 new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), errors);
+        log.error("error caught: " + ex.getMessage(), ex);
         return new ResponseEntity<Object>(
                 apiError, new HttpHeaders(), apiError.getStatus());
     }
@@ -84,6 +87,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
         ApiError apiError =
                 new ApiError(HttpStatus.BAD_REQUEST, ex.getLocalizedMessage(), error);
+        log.error("error caught: " + ex.getMessage(), ex);
         return new ResponseEntity<Object>(
                 apiError, new HttpHeaders(), apiError.getStatus());
     }
@@ -94,6 +98,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         String error = "No handler found for " + ex.getHttpMethod() + " " + ex.getRequestURL();
 
         ApiError apiError = new ApiError(HttpStatus.NOT_FOUND, ex.getLocalizedMessage(), error);
+        log.error("error caught: " + ex.getMessage(), ex);
         return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
     }
 
@@ -111,6 +116,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
         ApiError apiError = new ApiError(HttpStatus.METHOD_NOT_ALLOWED,
                 ex.getLocalizedMessage(), builder.toString());
+        log.error("error caught: " + ex.getMessage(), ex);
         return new ResponseEntity<Object>(
                 apiError, new HttpHeaders(), apiError.getStatus());
     }
@@ -128,6 +134,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
         ApiError apiError = new ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE,
                 ex.getLocalizedMessage(), builder.substring(0, builder.length() - 2));
+        log.error("error caught: " + ex.getMessage(), ex);
         return new ResponseEntity<Object>(
                 apiError, new HttpHeaders(), apiError.getStatus());
     }
@@ -140,6 +147,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 Objects.nonNull(ex.getEntityName()) ? ex.getEntityName() : "not found",
                 "NOT_FOUND"
         );
+        log.error("error caught: " + ex.getMessage(), ex);
         return new ResponseEntity<Object>(
                 apiError, new HttpHeaders(), apiError.getStatus());
     }
@@ -152,6 +160,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 Objects.nonNull(ex.getEntityName()) ? ex.getEntityName() : "error occurred",
                 "BAD_REQUEST_ERROR"
         );
+        log.error("error caught: " + ex.getMessage(), ex);
         return new ResponseEntity<>(
                 apiError, new HttpHeaders(), apiError.getStatus());
     }
@@ -168,6 +177,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ApiError apiError = new ApiError(status, "Read message error", "message_not_readable", "error occurred");
+        log.error("error caught: " + ex.getMessage(), ex);
         return new ResponseEntity<>(apiError, headers, apiError.getStatus());
     }
 

@@ -11,5 +11,4 @@ public class PathDTO {
     private StationDTO s_node;
     private Boolean reserved;
     private Long length;
-    private List<TrainDTO> trains;
 }
