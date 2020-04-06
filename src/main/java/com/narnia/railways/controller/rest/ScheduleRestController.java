@@ -1,7 +1,6 @@
 package com.narnia.railways.controller.rest;
 
 import com.narnia.railways.service.ScheduleService;
-import com.narnia.railways.service.dto.StationDTO;
 import com.narnia.railways.service.dto.TrainScheduleDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;

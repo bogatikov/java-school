@@ -41,7 +41,7 @@ public class Train {
     @OneToMany(mappedBy = "train")
     private List<Carriage> carriages;
 
-    private Long moveCounter;
+    private Long moveCounter = 0L;
 
     public void move() {
         this.moveCounter++;

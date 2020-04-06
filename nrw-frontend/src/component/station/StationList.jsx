@@ -3,84 +3,85 @@ import API from "../../utils/API";
 import Station from "./Station";
 import {Button, Table} from "react-bootstrap";
 import StationCreateModal from "./StationCreateModal";
+import {useState} from "react";
+import {useEffect} from "react";
 
-//FIXME the stations list doesn't update when station was added/VAL
-export default class StationList extends React.Component {
+const StationList = ({...props}) => {
+    const [isLoading, setIsLoading] = useState(true);
+    const [stations, setStations] = useState([]);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            isLoading: true,
-            stations: [],
-            isCreateModalOpen: false
-        };
-    }
+    useEffect(() => {
+        dataLoad()
+    }, []);
 
-    componentDidMount() {
-        this.dataLoad();
-    }
-
-    onStationListChanged = (station) => {
-        this.dataLoad();
+    const onStationListChanged = (station) => {
+        dataLoad();
     };
-
-    render() {
-        const {isLoading, stations, isCreateModalOpen} = this.state;
-        const rows = [];
-        stations.forEach(station => {
-            rows.push(<Station
-                station={station}
-                key={station.id}
-                onStationListChanged={this.onStationListChanged}
-            />);
-        });
-        if (isLoading) {
-            return <div>Loading....</div>;
-        } else {
-            return <Table responsive hover>
-                <thead>
-                <tr>
-                    <th>Station</th>
-                    <th>Longitude</th>
-                    <th>Latitude</th>
-                    <th>Capacity</th>
-                    <th>Value</th>
-                    <th>
-                        <Button
-                            onClick={this.openCreateEntryModal}
-                        >
-                            A
-                        </Button>
-                        <StationCreateModal
-                            isOpen={isCreateModalOpen}
-                            onClose={this.handleClose}
-                        />
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                {rows}
-                </tbody>
-            </Table>
-        }
-    }
-
-
-    handleClose = (event) => {
-        this.setState({isCreateModalOpen: false})
-    };
-
-    openCreateEntryModal = () => {
-        this.setState({isCreateModalOpen: true});
-    };
-
-    async dataLoad() {
+    async function dataLoad() {
         await API.get('/api/v1/station/')
             .then(response => {
-                this.setState({isLoading: false, stations: response.data});
+                setIsLoading(false);
+                setStations(response.data);
             })
             .catch(reason => {
                 console.log(reason);
             });
     }
-}
+
+    const onStationCreated = (station) => {
+        console.log(station);
+        setStations(prevState => {
+            prevState.push(station);
+            return prevState;
+        });
+    };
+    const handleClose = (event) => {
+        setIsCreateModalOpen(false);
+    };
+
+    const openCreateEntryModal = () => {
+        setIsCreateModalOpen(true);
+    };
+
+    const rows = [];
+    stations.forEach(station => {
+        rows.push(<Station
+            station={station}
+            key={station.id}
+            onStationListChanged={onStationListChanged}
+        />);
+    });
+    if (isLoading) {
+        return <div>Loading....</div>;
+    } else {
+        return <Table responsive hover>
+            <thead>
+            <tr>
+                <th>Station</th>
+                <th>Longitude</th>
+                <th>Latitude</th>
+                <th>Capacity</th>
+                <th>Waiting time</th>
+                <th>
+                    <Button
+                        onClick={openCreateEntryModal}
+                    >
+                        A
+                    </Button>
+                    <StationCreateModal
+                        isOpen={isCreateModalOpen}
+                        onClose={handleClose}
+                        onStationCreated={onStationCreated}
+                    />
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {rows}
+            </tbody>
+        </Table>
+    }
+};
+
+export default StationList;

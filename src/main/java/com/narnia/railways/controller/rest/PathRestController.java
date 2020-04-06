@@ -1,6 +1,7 @@
 package com.narnia.railways.controller.rest;
 
 import com.narnia.railways.model.Path;
+import com.narnia.railways.model.Station;
 import com.narnia.railways.service.PathService;
 import com.narnia.railways.service.TrainService;
 import com.narnia.railways.service.dto.PathDTO;
@@ -34,6 +35,13 @@ public class PathRestController {
                 .map(path -> modelMapper.map(path, PathDTO.class))
                 .collect(Collectors.toList())
         );
+    }
+
+    @GetMapping("/find/from/{from}/to/{to}")
+    public ResponseEntity<?> findWayBetweenStations(@PathVariable(name = "from") Long fromId, @PathVariable(name = "to") Long toId) {
+
+        List<List<PathDTO>> trainsPath = trainService.getTrainsPath(fromId, toId);
+        return ResponseEntity.ok().body(trainsPath);
     }
 
     @GetMapping("/{train}")

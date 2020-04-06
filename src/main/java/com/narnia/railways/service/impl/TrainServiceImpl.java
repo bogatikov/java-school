@@ -1,8 +1,10 @@
 package com.narnia.railways.service.impl;
 
+import com.narnia.railways.controller.exception.BadRequestException;
 import com.narnia.railways.dao.TrainDAO;
 import com.narnia.railways.model.*;
 import com.narnia.railways.service.PathService;
+import com.narnia.railways.service.StationService;
 import com.narnia.railways.service.TrainService;
 import com.narnia.railways.service.Updatable;
 import com.narnia.railways.service.dto.PathDTO;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.narnia.railways.model.TrainState.*;
@@ -25,12 +28,15 @@ public class TrainServiceImpl implements TrainService, Updatable {
 
     private final PathService pathService;
 
+    private final StationService stationService;
+
     @Autowired
     private ModelMapper modelMapper;
 
-    public TrainServiceImpl(TrainDAO trainDAO, PathService pathService) {
+    public TrainServiceImpl(TrainDAO trainDAO, PathService pathService, StationService stationService) {
         this.trainDAO = trainDAO;
         this.pathService = pathService;
+        this.stationService = stationService;
     }
 
     @Override
@@ -245,6 +251,16 @@ public class TrainServiceImpl implements TrainService, Updatable {
                         Collectors
                                 .toList()
                 );
+    }
+
+    @Override
+    public List<List<PathDTO>> getTrainsPath(Long fromId, Long toId) {
+        Station from = stationService.getById(fromId);
+        Station to = stationService.getById(toId);
+        if (Objects.isNull(from) || Objects.isNull(to)) {
+            throw new BadRequestException("tsi", "Wrong stations");
+        }
+        return this.getTrainsPath(from, to);
     }
 
     @Override

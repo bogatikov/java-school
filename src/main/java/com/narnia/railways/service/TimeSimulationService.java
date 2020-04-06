@@ -7,6 +7,4 @@ public interface TimeSimulationService {
     Instant convertTicksToTime(long ticks);
 
     Instant getCurrentSimulationTime();
-
-    Long getAmountOfTimeUnitPerTick();
 }

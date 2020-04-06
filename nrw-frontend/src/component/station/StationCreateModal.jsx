@@ -5,7 +5,7 @@ import {useInput} from "../utils/useInput";
 import API from "../../utils/API";
 
 const StationCreateModal = ({...props}) => {
-    const {isOpen, onClose} = props;
+    const {isOpen, onClose, onStationCreated} = props;
     const [validationErrors, setValidationsErrors] = useState({});
 
     const handleClose = () => {
@@ -15,7 +15,7 @@ const StationCreateModal = ({...props}) => {
 
     const {value: stationName, bind: bindStationName, reset: resetStationName} = useInput('');
     const {value: stationLongitude, bind: bindStationLongitude, reset: resetStationLongitude} = useInput('');
-    const {value: stationVal, bind: bindStationVal, reset: resetStationVal} = useInput('');
+    const {value: stationAwaitTime, bind: bindStationAwaitTime, reset: resetStationAwaitTime} = useInput('');
     const {value: stationLatitude, bind: bindStationLatitude, reset: resetStationLatitude} = useInput('');
     const {value: stationCapacity, bind: bindStationCapacity, reset: resetStationCapacity} = useInput('');
 
@@ -27,17 +27,16 @@ const StationCreateModal = ({...props}) => {
                 "longitude": stationLongitude,
                 "latitude": stationLatitude,
                 "capacity": stationCapacity,
-                "val": stationVal
+                "awaitTime": stationAwaitTime
             })
-                .then(response => JSON.stringify(response))
                 .then(response => {
                     resetStationName();
                     resetStationLongitude();
                     resetStationLatitude();
                     resetStationCapacity();
-                    resetStationVal();
+                    resetStationAwaitTime();
                     setValidationsErrors({});
-                    console.log("Success: ", response);
+                    onStationCreated(response.data);
                 }).catch((error) => {
                     // Error 😨
                     if (error.response) {
@@ -122,14 +121,14 @@ const StationCreateModal = ({...props}) => {
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group controlId="station_capacity">
-                            <Form.Label>Value</Form.Label>
-                            <Form.Control type="text" {...bindStationVal}
-                                          placeholder="Enter station value"
-                                          isInvalid={validationErrors.val !== undefined}
+                            <Form.Label>Await time</Form.Label>
+                            <Form.Control type="text" {...bindStationAwaitTime}
+                                          placeholder="Enter station await time"
+                                          isInvalid={validationErrors.awaitTime !== undefined}
                                           required
                             />
                             <Form.Control.Feedback type="invalid">
-                                {validationErrors.val !== undefined ? validationErrors.val : "Please, enter the station`s value"}
+                                {validationErrors.awaitTime !== undefined ? validationErrors.awaitTime : "Please, enter the await time"}
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Button variant="primary" type="submit">

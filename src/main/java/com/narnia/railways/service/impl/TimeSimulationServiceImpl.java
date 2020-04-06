@@ -7,13 +7,13 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+import static com.narnia.railways.config.Constants.AMOUNT_OF_TIME_UNIT_PER_TICK;
+
 @Service
 public class TimeSimulationServiceImpl implements Updatable, TimeSimulationService {
 
 
     private Instant currentSimulationTime;
-
-    private Long amountOfTimeUnitPerTick = 5L;
 
     public TimeSimulationServiceImpl() {
         currentSimulationTime = Instant.parse("2020-03-08T15:20:00Z");
@@ -24,7 +24,7 @@ public class TimeSimulationServiceImpl implements Updatable, TimeSimulationServi
             return Instant.ofEpochSecond(currentSimulationTime.getEpochSecond());
         }
         Instant result = Instant.ofEpochSecond(currentSimulationTime.getEpochSecond());
-        result = result.plus(amountOfTimeUnitPerTick * ticks, ChronoUnit.MINUTES);
+        result = result.plus(AMOUNT_OF_TIME_UNIT_PER_TICK * ticks, ChronoUnit.MINUTES);
         return result;
     }
 
@@ -34,11 +34,7 @@ public class TimeSimulationServiceImpl implements Updatable, TimeSimulationServi
     }
 
     @Override
-    public Long getAmountOfTimeUnitPerTick() {
-        return amountOfTimeUnitPerTick;
-    }
-    @Override
     public void tick() {
-        this.currentSimulationTime = this.currentSimulationTime.plus(amountOfTimeUnitPerTick, ChronoUnit.MINUTES);
+        this.currentSimulationTime = this.currentSimulationTime.plus(AMOUNT_OF_TIME_UNIT_PER_TICK, ChronoUnit.MINUTES);
     }
 }

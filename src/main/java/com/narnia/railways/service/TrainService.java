@@ -33,11 +33,13 @@ public interface TrainService {
 
     boolean isAvailablePath(Train train, Station fromStation, Station toStation);
 
-    List<List<PathDTO>> getTrainsPath(Station from, Station to);
-
     Train addTrain(TrainDTO trainDTO);
 
     Train updateTrain(Train train, TrainDTO trainDTO);
 
     List<Path> getAvailablePathsForTrain(Long trainId);
+
+    List<List<PathDTO>> getTrainsPath(Station from, Station to);
+
+    List<List<PathDTO>> getTrainsPath(Long fromId, Long toId);
 }

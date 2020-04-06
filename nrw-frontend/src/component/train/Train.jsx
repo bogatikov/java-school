@@ -12,22 +12,17 @@ const Train = ({...props}) => {
     const [train, setTrain] = useState(props.train);
     const [isEditModalOpen, setEditModalOpen] = useState(false);
     const [isPassengerModalOpen, setPassengerModalOpen] = useState(false);
-    const [isTicketPurchaseModalOpen, setTicketPurchaseModalOpen] = useState(false);
+
 
     const handleEditModalClose = () => {
         setEditModalOpen(false);
     };
-    const handleTicketPurchaseClose = () => {
-        setTicketPurchaseModalOpen(false);
-    };
+
 
     const handlePassengerModalClose = () => {
         setPassengerModalOpen(false);
     };
 
-    const onTicketPurchaseModalOpen = () => {
-        setTicketPurchaseModalOpen(true);
-    };
 
     const onTrainUpdate = (newTrain) => {
         setTrain(newTrain);
@@ -74,17 +69,9 @@ const Train = ({...props}) => {
                         >
                             P
                         </Button>
-                        <Button
-                            variant={"warning"}
-                            onClick={onTicketPurchaseModalOpen}
-                        >
-                            T
-                        </Button>
+
                     </ButtonGroup>
-                    {isTicketPurchaseModalOpen ? <BuyTicketModal
-                        trainId={train.id}
-                        onClose={handleTicketPurchaseClose}
-                    /> : null}
+
                     <TrainEditModal
                         isOpen={isEditModalOpen}
                         train={train}

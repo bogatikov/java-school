@@ -31,7 +31,7 @@ public class StationRestController {
         List<Station> stations = stationService.getAll();
         return ResponseEntity.ok().body(stations.stream()
                 .map(
-                        station -> modelMapper.map(station, StationDTO.class)
+                        StationDTO::toDto
                 )
                 .collect(Collectors.toList())
         );
@@ -40,7 +40,16 @@ public class StationRestController {
     @GetMapping("/{station}")
     public ResponseEntity<StationDTO> getStation(@PathVariable(name = "station") Long stationId) {
         Station station = stationService.getById(stationId);
-        return ResponseEntity.ok().body(modelMapper.map(station, StationDTO.class));
+        return ResponseEntity.ok().body(StationDTO.toDto(station));
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<StationDTO>> getActiveStationList() {
+        List<Station> activeStations = stationService.getActiveStations();
+        return ResponseEntity.ok().body(activeStations.stream()
+                .map(StationDTO::toDto)
+                .collect(Collectors.toList())
+        );
     }
 
     @PostMapping
@@ -48,7 +57,7 @@ public class StationRestController {
         Station station = stationService.addStation(stationDTO);
 
         return ResponseEntity.ok().body(
-                modelMapper.map(station, StationDTO.class)
+                StationDTO.toDto(station)
         );
     }
 
@@ -65,7 +74,7 @@ public class StationRestController {
         Station updatedStation = stationService.updateStation(station, stationDTO);
 
         return ResponseEntity.ok().body(
-                modelMapper.map(updatedStation, StationDTO.class)
+                StationDTO.toDto(updatedStation)
         );
     }
 

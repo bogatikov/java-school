@@ -17,7 +17,7 @@ const StationEditModal = ({...props}) => {
     const {value: stationName, bind: bindStationName} = useInput(station.name);
     const {value: stationLongitude, bind: bindStationLongitude} = useInput(station.longitude);
     const {value: stationLatitude, bind: bindStationLatitude} = useInput(station.latitude);
-    const {value: stationVal, bind: bindStationVal} = useInput(station.val);
+    const {value: stationAwaitTime, bind: bindStationAwaitTime} = useInput(station.awaitTime);
     const {value: stationCapacity, bind: bindStationCapacity} = useInput(station.capacity);
 
 
@@ -29,12 +29,12 @@ const StationEditModal = ({...props}) => {
                 "longitude": stationLongitude,
                 "latitude": stationLatitude,
                 "capacity": stationCapacity,
-                "val": stationVal
+                "awaitTime": stationAwaitTime
             })
                 .then(response => {
                     handleClose();
-                    onStationUpdated(response.data);
                     setValidationsErrors({});
+                    onStationUpdated(response.data);
                 }).catch((error) => {
                 // Error 😨
                 if (error.response) {
@@ -120,14 +120,14 @@ const StationEditModal = ({...props}) => {
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Form.Group controlId="station_capacity">
-                            <Form.Label>Value</Form.Label>
-                            <Form.Control type="text" {...bindStationVal}
-                                          placeholder="Enter station value"
-                                          isInvalid={validationErrors.val !== undefined}
+                            <Form.Label>Awaiting Time</Form.Label>
+                            <Form.Control type="text" {...bindStationAwaitTime}
+                                          placeholder="Enter station await time"
+                                          isInvalid={validationErrors.awaitTime !== undefined}
                                           required
                             />
                             <Form.Control.Feedback type="invalid">
-                                {validationErrors.val !== undefined ? validationErrors.val : "Please, enter the station`s value"}
+                                {validationErrors.awaitTime !== undefined ? validationErrors.awaitTime : "Please, enter the station`s await time"}
                             </Form.Control.Feedback>
                         </Form.Group>
                         <Button variant="primary" type="submit">

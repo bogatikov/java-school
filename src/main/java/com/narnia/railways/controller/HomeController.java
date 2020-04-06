@@ -94,25 +94,6 @@ class HomeController {
         return "redirect:/";
     }
 
-    @GetMapping(value = "/test", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<List<List<PathDTO>>> dotest(@RequestParam(name = "from") Long from, @RequestParam(name = "to") Long to) {
-
-        if (Objects.isNull(from) || Objects.isNull(to)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        List<List<PathDTO>> trainsPath = trainService.getTrainsPath(stationService.getById(from), stationService.getById(to));
-//        List<TrackDTO> wayBetweenStations = pathService.findWayBetweenStations(stationService.getById(from), stationService.getById(to));
-//        return ResponseEntity.ok(wayBetweenStations.stream().map(trackDTO -> {
-//                    return trackDTO.getStations().stream().map(StationDTO::map).collect(Collectors.toList());
-//                }
-//        ).collect(Collectors.toList()).get(0));
-        return ResponseEntity.ok()
-                .body(trainsPath);
-    }
-
-
     @GetMapping("/hello")
     public String getHello() {
         return "hello";

@@ -4,6 +4,7 @@ import {Button, Form, Modal} from "react-bootstrap";
 import {useInput} from "../utils/useInput";
 import API from "../../utils/API";
 import Track from "../path/Track";
+import TicketInfo from "./TicketInfo";
 
 const BuyTicketModal = ({...props}) => {
 
@@ -12,6 +13,7 @@ const BuyTicketModal = ({...props}) => {
     const [validationErrors, setValidationsErrors] = useState({});
     const [fromId, setFromId] = useState(0);
     const [toId, setToId] = useState(0);
+    const [ticket, setTicket] = useState(null);
 
     const {value: firstName, bind: bindFirstName} = useInput("");
     const {value: lastName, bind: bindLastName} = useInput("");
@@ -20,12 +22,6 @@ const BuyTicketModal = ({...props}) => {
     const handleSubmit = (evt) => {
         evt.preventDefault();
         try {
-            console.log("trainID" + train.id);
-            console.log("fromStationID" + fromId);
-            console.log("toStationID" + toId);
-            console.log("firstName" + firstName);
-            console.log("lastName" + lastName);
-            console.log("birthday " + birthday);
             API.post('/api/v1/ticket/', {
                 "trainID": train.id,
                 "fromStationID": fromId,
@@ -37,6 +33,7 @@ const BuyTicketModal = ({...props}) => {
                 .then(response => {
                     setValidationsErrors({});
                     console.log(response.data);
+                    setTicket(response.data);
                 }).catch((error) => {
                 // Error 😨
                 console.log(error);
@@ -114,63 +111,66 @@ const BuyTicketModal = ({...props}) => {
 
 
     return (
-        <Modal show={true} onHide={handleClose}>
-            <Modal.Header>
-                Buy ticket on train {train.number}
-            </Modal.Header>
-            <Modal.Body>
-                <Track
-                    track={train.track}
-                />
-                <Form onSubmit={handleSubmit}>
-                    <Form.Group controlId="exampleForm.ControlSelect1">
-                        <Form.Label>From</Form.Label>
-                        <Form.Control as="select" onChange={v => setFromId(v.target.value)}>
-                            {stations}
-                        </Form.Control>
-                    </Form.Group>
-                    <Form.Group controlId="exampleForm.ControlSelect1">
-                        <Form.Label>To</Form.Label>
-                        <Form.Control as="select" onChange={v => setToId(v.target.value)}>
-                            {stations}
-                        </Form.Control>
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Control type="text" {...bindFirstName}
-                                      placeholder="Enter last name"
-                                      isInvalid={validationErrors.firstName !== undefined}
-                                      required
-                        />
-                        <Form.Control.Feedback type="invalid">
-                            {validationErrors.firstName !== undefined ? validationErrors.firstName : "Please, enter the first name"}
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Control type="text" {...bindLastName}
-                                      placeholder="Enter last name"
-                                      isInvalid={validationErrors.lastName !== undefined}
-                                      required
-                        />
-                        <Form.Control.Feedback type="invalid">
-                            {validationErrors.lastName !== undefined ? validationErrors.lastName : "Please, enter the last name"}
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Control type="text" {...bindBirthday}
-                                      placeholder="30/12/1990"
-                                      isInvalid={validationErrors.birthday !== undefined}
-                                      required
-                        />
-                        <Form.Control.Feedback type="invalid">
-                            {validationErrors.birthday !== undefined ? validationErrors.birthday : "Please, enter the birthday"}
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Button variant="success" type="submit">
-                        Buy
-                    </Button>
-                </Form>
-            </Modal.Body>
-        </Modal>
+        <>
+            {ticket ? <TicketInfo ticket={ticket}/> : null}
+            <Modal show={true} onHide={handleClose}>
+                <Modal.Header>
+                    Buy ticket on train {train.number}
+                </Modal.Header>
+                <Modal.Body>
+                    <Track
+                        track={train.track}
+                    />
+                    <Form onSubmit={handleSubmit}>
+                        <Form.Group controlId="exampleForm.ControlSelect1">
+                            <Form.Label>From</Form.Label>
+                            <Form.Control as="select" onChange={v => setFromId(v.target.value)}>
+                                {stations}
+                            </Form.Control>
+                        </Form.Group>
+                        <Form.Group controlId="exampleForm.ControlSelect1">
+                            <Form.Label>To</Form.Label>
+                            <Form.Control as="select" onChange={v => setToId(v.target.value)}>
+                                {stations}
+                            </Form.Control>
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Control type="text" {...bindFirstName}
+                                          placeholder="Enter last name"
+                                          isInvalid={validationErrors.firstName !== undefined}
+                                          required
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                {validationErrors.firstName !== undefined ? validationErrors.firstName : "Please, enter the first name"}
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Control type="text" {...bindLastName}
+                                          placeholder="Enter last name"
+                                          isInvalid={validationErrors.lastName !== undefined}
+                                          required
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                {validationErrors.lastName !== undefined ? validationErrors.lastName : "Please, enter the last name"}
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Control type="text" {...bindBirthday}
+                                          placeholder="30/12/1990"
+                                          isInvalid={validationErrors.birthday !== undefined}
+                                          required
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                {validationErrors.birthday !== undefined ? validationErrors.birthday : "Please, enter the birthday"}
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                        <Button variant="success" type="submit">
+                            Buy
+                        </Button>
+                    </Form>
+                </Modal.Body>
+            </Modal>
+        </>
     );
 };
 

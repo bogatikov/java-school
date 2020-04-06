@@ -14,7 +14,6 @@ const Station = ({...props}) => {
     };
 
     const onStationUpdated = (newStation) => {
-        console.log(newStation);
         setStation(newStation);
     };
 
@@ -33,7 +32,7 @@ const Station = ({...props}) => {
             <td>{station.longitude}</td>
             <td>{station.latitude}</td>
             <td>{station.capacity}</td>
-            <td>{station.val}</td>
+            <td>{station.awaitTime}</td>
             <td>
                 <Button
                     onClick={() => setEditModalOpen(true)}

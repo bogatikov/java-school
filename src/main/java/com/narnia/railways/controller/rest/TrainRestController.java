@@ -2,8 +2,9 @@ package com.narnia.railways.controller.rest;
 
 import com.narnia.railways.model.Train;
 import com.narnia.railways.service.TrainService;
-import com.narnia.railways.service.dto.TrainDTO;
+import com.narnia.railways.service.dto.StationDTO;
 import com.narnia.railways.service.dto.TrainBuyTicketDTO;
+import com.narnia.railways.service.dto.TrainDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,22 +42,30 @@ public class TrainRestController {
     @GetMapping("/{train}")
     public ResponseEntity<TrainDTO> getTrain(@PathVariable(name = "train") Long trainId) {
         Train train = trainService.getById(trainId);
-        return ResponseEntity.ok().body(modelMapper.map(train, TrainDTO.class));
+        TrainDTO dto = modelMapper.map(train, TrainDTO.class);
+        dto.setTo(StationDTO.toDto(train.getToStation()));
+        dto.setFrom(StationDTO.toDto(train.getFromStation()));
+        return ResponseEntity.ok().body(dto);
     }
 
     @GetMapping("/track/{train}")
     public ResponseEntity<TrainBuyTicketDTO> getTrainTrack(@PathVariable(name = "train") Long trainId) {
 
         Train train = trainService.getById(trainId);
-        return ResponseEntity.ok().body(modelMapper.map(train, TrainBuyTicketDTO.class));
+        TrainBuyTicketDTO dto = modelMapper.map(train, TrainBuyTicketDTO.class);
+        dto.setTo(StationDTO.toDto(train.getToStation()));
+        dto.setFrom(StationDTO.toDto(train.getFromStation()));
+        return ResponseEntity.ok().body(dto);
     }
 
     @PostMapping
     public ResponseEntity<TrainDTO> addTrain(@RequestBody @Valid TrainDTO trainDTO) {
         Train train = trainService.addTrain(trainDTO);
-
+        TrainDTO dto = modelMapper.map(train, TrainDTO.class);
+        dto.setTo(StationDTO.toDto(train.getToStation()));
+        dto.setFrom(StationDTO.toDto(train.getFromStation()));
         return ResponseEntity.ok().body(
-                modelMapper.map(train, TrainDTO.class)
+                dto
         );
     }
 
@@ -71,9 +80,11 @@ public class TrainRestController {
         }
 
         Train updatedTrain = trainService.updateTrain(train, trainDTO);
-
+        TrainDTO dto = modelMapper.map(updatedTrain, TrainDTO.class);
+        dto.setTo(StationDTO.toDto(train.getToStation()));
+        dto.setFrom(StationDTO.toDto(train.getFromStation()));
         return ResponseEntity.ok().body(
-                modelMapper.map(updatedTrain, TrainDTO.class)
+                dto
         );
     }
 

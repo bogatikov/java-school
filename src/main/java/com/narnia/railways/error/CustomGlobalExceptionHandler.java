@@ -38,9 +38,6 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
             errors.put(error.getField(), error.getDefaultMessage());
         }
-//        ex.getBindingResult().getAllErrors().forEach(objectError -> {
-//            errors.put(objectError.getObjectName(), objectError.getDefaultMessage());
-//        });
 
         ApiValidationError apiValidationError =
                 new ApiValidationError(HttpStatus.BAD_REQUEST, "Validation error", "validation_error", errors);

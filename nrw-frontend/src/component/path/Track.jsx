@@ -4,24 +4,17 @@ const Track = ({...props}) => {
     const track = props.track;
 
 
-    if (!track) {
+    if (!track || track.length === 0) {
         return <div></div>
     }
     const stations = [];
     track.forEach(path => {
-        const fNode = path.f_node;
-        const sNode = path.s_node;
-        if (stations.indexOf(fNode) === -1) {
-            stations.push(fNode.name);
-        }
-        if (stations.indexOf(sNode) === -1) {
-            stations.push(sNode.name);
-        }
+        stations.push(<> {path.f_node.name} <br />{path.s_node.name}</>);
     });
 
     return (
         <div>
-            {stations.join(" <-> ")}
+            {stations}
         </div>
     );
 };

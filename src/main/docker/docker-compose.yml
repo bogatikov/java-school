@@ -23,6 +23,6 @@ services:
       - nrw-db
 
   nrw-frontend:
-    image: 'nrw-frontend:0.1'
+    image: 'my-react-app'
     ports:
     - 80:80
