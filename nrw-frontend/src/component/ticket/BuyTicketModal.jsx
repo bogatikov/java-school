@@ -1,6 +1,6 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
-import {Button, Form, Modal} from "react-bootstrap";
+import {Alert, Button, Form, Modal} from "react-bootstrap";
 import {useInput} from "../utils/useInput";
 import API from "../../utils/API";
 import Track from "../path/Track";
@@ -14,6 +14,7 @@ const BuyTicketModal = ({...props}) => {
     const [fromId, setFromId] = useState(0);
     const [toId, setToId] = useState(0);
     const [ticket, setTicket] = useState(null);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const {value: firstName, bind: bindFirstName} = useInput("");
     const {value: lastName, bind: bindLastName} = useInput("");
@@ -37,6 +38,7 @@ const BuyTicketModal = ({...props}) => {
                 }).catch((error) => {
                 // Error 😨
                 console.log(error);
+                console.log(error.response);
                 if (error.response) {
                     /*
                      * The request was made and the server responded with a
@@ -46,7 +48,9 @@ const BuyTicketModal = ({...props}) => {
                         console.log("Not valid");
                         setValidationsErrors(error.response.data.errors);
                     } else if (error.response.data.type !== undefined && error.response.data.type === 'message_not_readable') {
-                        alert(error.response.data.message);
+                        setErrorMessage(error.response.data.message);
+                    } else {
+                        setErrorMessage(error.response.data.message);
                     }
                 } else if (error.request) {
                     /*
@@ -57,7 +61,7 @@ const BuyTicketModal = ({...props}) => {
                     console.log(error.request);
                 } else {
                     // Something happened in setting up the request and triggered an Error
-                    console.log('Error', error.message);
+                    console.log(error);
                 }
             });
 
@@ -118,6 +122,7 @@ const BuyTicketModal = ({...props}) => {
                     Buy ticket on train {train.number}
                 </Modal.Header>
                 <Modal.Body>
+                    {errorMessage !== "" ? <Alert variant="danger">{errorMessage}</Alert> : null}
                     <Track
                         track={train.track}
                     />

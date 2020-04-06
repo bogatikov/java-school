@@ -65,6 +65,7 @@ const StationList = ({...props}) => {
                 <th>Waiting time</th>
                 <th>
                     <Button
+                        variant="success"
                         onClick={openCreateEntryModal}
                     >
                         A

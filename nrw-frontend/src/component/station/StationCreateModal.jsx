@@ -37,6 +37,7 @@ const StationCreateModal = ({...props}) => {
                     resetStationAwaitTime();
                     setValidationsErrors({});
                     onStationCreated(response.data);
+                    handleClose();
                 }).catch((error) => {
                     // Error 😨
                     if (error.response) {

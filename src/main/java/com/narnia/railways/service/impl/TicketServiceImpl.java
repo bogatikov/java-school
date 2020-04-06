@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class TicketServiceImpl implements TicketService, Updatable {
@@ -75,19 +75,26 @@ public class TicketServiceImpl implements TicketService, Updatable {
         final Station toStation = ticketDTO.getToStation();
         final Train train = ticketDTO.getTrain();
 
+        if (train.getNextPath().getS_node().equals(toStation) && train.getDirection().equals(TrainDirect.FORWARD)) {
+            throw new BadRequestException("ticket", "The train is on the way to destination station");
+        }
+        if (train.getNextPath().getF_node().equals(toStation) && train.getDirection().equals(TrainDirect.BACKWARD)) {
+            throw new BadRequestException("ticket", "The train is on the way to destination station");
+        }
         if (fromStation.equals(toStation)) {
-            throw new BadRequestException("ticket", "stations from and couldn't be the same");
+            throw new BadRequestException("ticket", "Stations from and to must be different");
         }
         if (!trainService.isAvailablePath(train, fromStation, toStation)) {
             throw new BadRequestException("ticket", "There is no paths between stations");
         }
 
-        Carriage carriage = carriageDAO.getCarriageWithFreePlace(train);
+        Optional<Carriage> retrievedCarriage = carriageDAO.getCarriageWithFreePlace(train);
 
-        if (Objects.isNull(carriage)) {
+        if (retrievedCarriage.isEmpty()) {
             throw new BadRequestException("ticket", "There is no vacations place on the train");
         }
 
+        Carriage carriage = retrievedCarriage.get();
         carriage.setCapacity(carriage.getCapacity() - 1);
 
         Passenger passenger = new Passenger();
@@ -113,8 +120,8 @@ public class TicketServiceImpl implements TicketService, Updatable {
         Ticket ticket = buyTicketOnTheTrain(
                 new TicketDTO(
                         trainService.getById(buyTicketDTO.getTrainID()),
-                        stationService.getById(buyTicketDTO.getFromStationID()),
-                        stationService.getById(buyTicketDTO.getToStationID())
+                        stationService.getById(buyTicketDTO.getToStationID()),
+                        stationService.getById(buyTicketDTO.getFromStationID())
                 ),
                 new PassengerDTO(
                         null,
@@ -126,6 +133,7 @@ public class TicketServiceImpl implements TicketService, Updatable {
         return modelMapper.map(ticket, TicketReceiptDTO.class);
     }
 
+    @Transactional
     @Override
     public void tick() {
         getActiveTickets()
@@ -133,6 +141,9 @@ public class TicketServiceImpl implements TicketService, Updatable {
                     Train train = ticket.getTrain();
                     if (ticket.getToStation().equals(train.getFromStation()) && train.getTrainState().equals(TrainState.STOP)) {
                         ticket.setIsActive(false);
+                        Carriage carriage = ticket.getCarriage();
+                        carriage.setCapacity(ticket.getCarriage().getCapacity() + 1);
+                        carriageDAO.update(carriage);
                         ticketDAO.update(ticket);
                     }
                 });

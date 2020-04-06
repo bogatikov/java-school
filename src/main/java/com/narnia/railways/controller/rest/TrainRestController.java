@@ -62,8 +62,6 @@ public class TrainRestController {
     public ResponseEntity<TrainDTO> addTrain(@RequestBody @Valid TrainDTO trainDTO) {
         Train train = trainService.addTrain(trainDTO);
         TrainDTO dto = modelMapper.map(train, TrainDTO.class);
-        dto.setTo(StationDTO.toDto(train.getToStation()));
-        dto.setFrom(StationDTO.toDto(train.getFromStation()));
         return ResponseEntity.ok().body(
                 dto
         );

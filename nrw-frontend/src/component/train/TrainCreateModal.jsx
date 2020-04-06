@@ -25,7 +25,8 @@ const TrainCreateModal = ({...props}) => {
                     resetTrainNumber();
                     setValidationsErrors({});
                     onTrainCreated(response.data);
-                    onClose();
+                    handleClose();
+                    console.log(response.data);
                 }).catch((error) => {
                 // Error 😨
                 if (error.response) {

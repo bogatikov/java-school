@@ -68,6 +68,7 @@ const TrainList = () => {
                 <th>Train direction</th>
                 <th>
                     <Button
+                        variant="success"
                         onClick={openCreateEntryModal}
                     >
                         A

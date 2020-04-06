@@ -13,7 +13,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-    <title>New Customer</title>
+    <title>Model Manage</title>
     <style>
         table {
             border-collapse: collapse;
@@ -82,8 +82,8 @@
     </table>
 
     <c:forEach items="${schedules.keySet()}" var="station">
-        <div style="float: left; margin: 5px 5px 5px 5px">
-            Table for station <b>${station}</b>
+        <div style="float: left; margin: 5px 5px 5px 5px">pm
+            Table for station <b>${stations.stream().filter(st -> st.getId().equals(station)).findFirst().get().name}</b>
             <table>
                 <tr>
                     <td>Train</td>
@@ -105,7 +105,7 @@
                                 </c:otherwise>
                             </c:choose>
 <%--                                ${(schedule.getArriveThrough() == 0) ? "TRAIN ARRIVAL" : schedule.getArrivalTime()}--%>
-                            <b>(${schedule.getArriveThrough()})</b>
+<%--                            <b>(${schedule.getArriveThrough()})</b>--%>
 <%--                            --%>
 <%--                            ${schedule.getTrain().getFromStation().equals(station) && schedule.getTrain().getTrainState().equals(TrainState.DEPARTURE) ? "TRAIN DEPARTURE" : schedule.getArrivalTime()}--%>
                         </td>

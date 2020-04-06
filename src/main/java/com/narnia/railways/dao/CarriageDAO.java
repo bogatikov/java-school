@@ -2,14 +2,15 @@ package com.narnia.railways.dao;
 
 import com.narnia.railways.model.Carriage;
 import com.narnia.railways.model.Train;
-import org.hibernate.LockMode;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.LockModeType;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional
@@ -49,12 +50,17 @@ public class CarriageDAO {
         return query.getResultList();
     }
 
-    public Carriage getCarriageWithFreePlace(Train train) {
+    public Optional<Carriage> getCarriageWithFreePlace(Train train) {
+        @SuppressWarnings("unchecked")
         TypedQuery<Carriage> query = sessionFactory.getCurrentSession()
                 .createQuery("from Carriage c where c.train = :train and c.capacity > 0")
                 .setMaxResults(1)
                 .setParameter("train", train)
                 .setLockMode(LockModeType.PESSIMISTIC_READ);
-        return query.getSingleResult();
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
     }
 }

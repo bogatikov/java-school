@@ -64,6 +64,7 @@ class HomeController {
         simulationService.tick();
         modelAndView.addObject("currentModelTime", timeSimulationService.getCurrentSimulationTime());
         modelAndView.addObject("trains", trainService.getActiveTrains());
+        modelAndView.addObject("stations", stationService.getActiveStations());
         modelAndView.addObject("schedules", scheduleService.getScheduleForStations());
         return modelAndView;
     }

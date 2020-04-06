@@ -1,6 +1,6 @@
 import * as React from "react";
 import {useState} from "react";
-import {Button} from "react-bootstrap";
+import {Button, ButtonGroup} from "react-bootstrap";
 import StationEditModal from "./StationEditModal";
 import API from "../../utils/API";
 
@@ -34,22 +34,25 @@ const Station = ({...props}) => {
             <td>{station.capacity}</td>
             <td>{station.awaitTime}</td>
             <td>
-                <Button
-                    onClick={() => setEditModalOpen(true)}
-                >
-                    E
-                </Button>
                 <StationEditModal
                     isOpen={isEditModalOpen}
                     station={station}
                     onClose={handleClose}
                     onStationUpdated={onStationUpdated}
                 />
-                <Button
-                    onClick={deleteStation}
-                >
-                    D
-                </Button>
+                <ButtonGroup>
+                    <Button
+                        onClick={() => setEditModalOpen(true)}
+                    >
+                        E
+                    </Button>
+                    <Button
+                        variant="danger"
+                        onClick={deleteStation}
+                    >
+                        D
+                    </Button>
+                </ButtonGroup>
             </td>
         </tr>
     );
